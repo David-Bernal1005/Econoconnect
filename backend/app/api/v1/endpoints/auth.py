@@ -1,68 +1,36 @@
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
-from datetime import datetime, timedelta
-from jose import jwt
-from werkzeug.security import check_password_hash
-from app.core.config import settings
-from app.schemas.user import UserCreate, UserResponse
-from app.services.user_service import create_user, get_user_by_username
-from enum import Enum
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.db.session import get_db
+from app.schemas.user import RegisterRequest, LoginRequest, UserResponse
+from app.models.user import RoleEnum, User
+from app.services.user_service import get_user_by_username, create_user
+from app.core.security import verify_password, create_access_token
 
-router  = APIRouter()
+router = APIRouter()
 
+@router.post("/register", response_model=UserResponse)
+def register(payload: RegisterRequest, db: Session = Depends(get_db)):
+    if get_user_by_username(db, payload.username):
+        raise HTTPException(status_code=400, detail="El username ya existe")
 
-fake_user = {"username": "admin@hotmail", "password": "1234"}
-
-# Esquema de entrada del Login
-class LoginRequest(BaseModel):
-    username: str
-    password: str  
-
-#tipo de rol 
-class RoleEnum(str, Enum):
-    administrador = "administrador"
-    usuario = "usuario" 
-
-#Esquema de para datos del register
-class RegisterRequest(BaseModel):
-    name: str
-    lastname: str
-    cellphone: int
-    direction: str
-    username: str
-    password: str
-    rol: RoleEnum
-
-# Generar token JWT para Login
-def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=30)):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + expires_delta
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
-    return encoded_jwt
+    user = create_user(
+        db,
+        name=payload.name,
+        lastname=payload.lastname,
+        cellphone=payload.cellphone,
+        direction=payload.direction,
+        username=payload.username,
+        password=payload.password,
+        rol=payload.rol,
+        email=payload.email,
+    )
+    return user
 
 @router.post("/login")
-def login(request: LoginRequest):
-    # Buscar el usuario en Mongo
-    user = get_user_by_username(request.username)
-    if not user:
-        raise HTTPException(status_code=401, detail="Usuario no encontrado")
+def login(payload: LoginRequest, db: Session = Depends(get_db)):
+    user: User | None = get_user_by_username(db, payload.username)
+    if not user or not verify_password(payload.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Credenciales incorrectas")
 
-    # Verificar contraseña
-    if not check_password_hash(user["password"], request.password):
-        raise HTTPException(status_code=401, detail="Contraseña incorrecta")
-
-    # Generar token JWT
-    token = create_access_token({"sub": request.username, "rol": user["rol"]})
+    token = create_access_token({"sub": user.username, "rol": user.rol.value})
     return {"access_token": token, "token_type": "bearer"}
-
-#api para el Register
-@router.post("/register", response_model=UserResponse)
-async def register(user: RegisterRequest):
-    existing_user = None  # Aquí deberías hacer consulta a la DB
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Usuario ya existente")
-
-    # Crea el usuario en la base de datos (ejemplo con servicio)
-    new_user = create_user(user.name, user.lastname, user.cellphone, user.direction, user.username, user.password, user.rol)
-    return new_user
