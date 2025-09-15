@@ -1,0 +1,15 @@
+from sqlalchemy import Column, Integer, String, Text, Enum, ForeignKey, TIMESTAMP, DECIMAL, Date, BigInteger, DATETIME
+from sqlalchemy.sql import func
+from backend.app.db.session import Base
+import enum
+
+class Grafica(Base):
+    __tablename__ = "grafica"
+
+    id_grafica = Column(Integer, primary_key=True, autoincrement=True)
+    titulo = Column(String(200))
+    descripcion = Column(Text)
+    tipo_grafica = Column(String(50))
+    autor_id = Column(Integer, ForeignKey("users.id_user"))
+    estado = Column(Enum("activa", "inactiva", name="estado_grafica"), default="activa")
+    fecha_creacion = Column(TIMESTAMP, server_default=func.now())

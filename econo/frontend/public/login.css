@@ -1,0 +1,147 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #1c2120;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+}
+
+.header {
+  background-color: #ffcc00;
+  color: #1c2120;
+  padding: 12px 400px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 50px;
+}
+
+.header-icon {
+  display: flex;           /* <-- Alinea en fila horizontal */
+  gap: 4px;               /* Espacio entre íconos */
+  position: absolute;
+  top: 60px;
+  right: 50px;
+  background-color: #ffcc00;
+  padding: 13px 30px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 50px;
+  color: #fff;
+  cursor: pointer;
+}
+.header-icon a:hover { 
+  color: #4F5F2C;
+}
+
+.header-icon a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.header-icon a:hover {
+  color: #333; 
+  transform: scale(1.2); 
+}
+
+
+
+
+.login-box {
+  background-color: #4c5058;
+  padding: 30px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-title {
+  background-color: #ffcc00;
+  color: #000;
+  text-align: center;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background-color: #121826;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.input-group i {
+  margin-right: 10px;
+  color: #ffcc00;
+}
+
+.input-group input {
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  flex: 1;
+  font-size: 14px;
+}
+
+.forgot {
+  text-align: left;
+  font-size: 12px;
+  color: #ffcc00;
+  margin-top: -15px;
+}
+
+.forgot:hover {
+  color: #fff;  /* Cambia a amarillo al pasar el mouse */
+}
+
+
+
+.btn {
+  background-color: #ffcc00;
+  border: none;
+  padding: 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #000;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #e6b800;
+}
+
+@media (max-width: 600px) {
+  .header-icon {
+    right: 20px;
+    top: 20px;
+    padding: 8px 16px;
+    font-size: 16px;
+  }
+
+  .header {
+    padding: 12px 20px;
+    font-size: 18px;
+    text-align: center;
+  }
+}
+::placeholder {
+  color: white;
+  opacity: 1; /* Asegura que no esté atenuado */
+}

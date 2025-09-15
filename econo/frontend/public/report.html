@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Denunciar publicación</title>
+  <link rel="stylesheet" href="report.css">
+</head>
+<body>
+
+<div class="post">
+  <div class="menu">⋮</div>
+  <div class="menu-options">
+    <button id="reportBtn">Denunciar</button>
+    <button id="reportBtn">Compartir</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="reportar" id="reportModal">
+  <div class="opciones" id="denunciar">
+    <h2>Denunciar</h2>
+    <p>¿Qué sucede con la publicación? </p>
+
+    <label class="option"><input type="radio" name="reason" value="sexual"> Contenido sexual</label>
+    <label class="option"><input type="radio" name="reason" value="violento"> Contenido violento o repulsivo</label>
+    <label class="option"><input type="radio" name="reason" value="odio"> Contenido abusivo o que incita al odio</label>
+    <label class="option"><input type="radio" name="reason" value="bullying"> Acoso o bullying</label>
+    <label class="option"><input type="radio" name="reason" value="peligroso"> Actividades peligrosas o dañinas</label>
+    <label class="option"><input type="radio" name="reason" value="suicidio"> Suicidio, autolesiones o trastornos</label>
+
+    <button class="btn btn-disabled" id="nextBtn" disabled>Siguiente</button>
+  </div>
+
+  <div class="mensaje" id="atras" style="display:none;">
+    <span class="back" id="backBtn">← Atrás</span>
+    <h2>Denunciar</h2>
+    <p><b>¿Quieres brindar más información?</b> Este campo es opcional.</p>
+    <p>Incluye algunos detalles para ayudarnos a entender el problema. No incluyas información personal.</p>
+    <textarea placeholder="Agrega detalles..."></textarea>
+    <button class="btn btn-primary">Denunciar</button>
+  </div>
+</div>
+
+<script src="src/pages/report.js"></script>
+
+</body>
+</html>

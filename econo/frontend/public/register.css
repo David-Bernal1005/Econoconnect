@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1c2120;
+  font-family: 'Roboto', sans-serif;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.register-container {
+  background-color: #4c5058;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 221, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+}
+
+.register-container h2 {
+  color: #ffdd00;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 28px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #ffdd00;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ffdd00;
+  border-radius: 6px;
+  background-color: #1c2120;
+  color: #fff;
+  font-size: 16px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #ffff33;
+  background-color: #222826;
+}
+
+button {
+  width: 100%;
+  background-color: #ffdd00;
+  color: #000;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #ffe94d;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #ffdd00;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+

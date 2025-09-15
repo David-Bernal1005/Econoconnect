@@ -1,0 +1,70 @@
+.carousel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw; /* O el valor que mejor se ajuste */
+    height: 60vh;
+    border-radius: 10px;
+    background-color: transparent;
+    /* overflow: hidden; /* Escondemos lo que se sale */ 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+
+
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    height: 100%;
+    box-sizing: content-box;
+}
+
+.slide {
+    min-width: 40%;       /* Tarjetas menos anchas que el contenedor */
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    transition: transform 0.3s ease;
+}
+
+
+
+.slide img,
+.slide > * {
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+/* Botones */
+.botones {
+    position: absolute;
+    top: 50%;
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    z-index: 10;
+}
+
+.boton {
+    background: #4c5058;
+    border: none;
+    color: white;
+    font-size: 24px;
+    padding: 15px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.boton:hover {
+    background: #1c2120;
+}

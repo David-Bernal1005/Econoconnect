@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro</title>
+  <link rel="stylesheet" href="register.css">
+</head>
+<body>
+  <div class="register-container">
+    <h2>Regístrate</h2>
+    <form id="registerForm">
+      
+      <div class="form-group">
+        <label for="usua_nombre">Nombres</label>
+        <input type="text" id="usua_nombre" name="usua_nombre">
+      </div>
+      
+      <div class="form-group">
+        <label for="usua_apellido">Apellidos</label>
+        <input type="text" id="usua_apellido" name="usua_apellido">
+      </div>
+
+      <div class="form-group">
+        <label for="usua_celular">Celular</label>
+        <input type="text" id="usua_celular" name="usua_celular">
+      </div>
+
+      <div class="form-group">
+        <label for="usua_direccion">Dirección</label>
+        <input type="text" id="usua_direccion" name="usua_direccion">
+      </div>
+      <div class="form-group">
+        <label for="usua_email">Email</label>
+        <input type="email" id="usua_email" name="usua_email">
+      </div>
+
+      <div class="form-group">
+        <label for="usua_pais">País</label>
+        <input type="text" id="usua_pais" name="usua_pais">
+      </div>
+
+      <div class="form-group">
+        <label for="usua_usuario">Usuario</label>
+        <input type="text" id="usua_usuario" name="usua_usuario">
+      </div>
+
+      <div class="form-group">
+        <label for="usua_password">Contraseña</label>
+        <input type="password" id="usua_password" name="usua_password">
+      </div>
+
+      <div class="form-group">
+        <label for="usua_rol_fk">Rol</label>
+        <select id="usua_rol_fk" name="usua_rol_fk">
+          <option disabled>administrador</option>
+          <option selected>usuario</option>
+        </select>
+      </div>
+
+  <button type="submit">Registrarse</button>
+  </form>
+  <div id="mensaje" style="margin-top:10px;color:#d32f2f;"></div>
+    <a href="login.html" class="back-link">Login</a>
+  </div>
+ <script src="../src/services/register.js"></script>
+</body>
+</html>
