@@ -30,6 +30,7 @@
     justify-content: center;
     padding: 20px; /* importante en móviles */
     box-sizing: border-box;
+    margin-top: -340px;
 }
 
 

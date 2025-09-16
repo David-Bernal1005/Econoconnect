@@ -1,13 +1,15 @@
-import React from 'react';
-import './exit.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./exit.css";
 
 const Exit = () => {
-    return (
-        <div class="sign-out">
-            <a href=""><img src="img/exit.svg" alt="Exit"/>
-            </a>        
-        </div>
-    );
+  return (
+    <div className="sign-out">
+      <Link to="/login">
+        <img src="img/exit.svg" alt="Exit" />
+      </Link>
+    </div>
+  );
 };
 
 export default Exit;

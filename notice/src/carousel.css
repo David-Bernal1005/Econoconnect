@@ -51,6 +51,7 @@
     transform: translateY(-50%);
     pointer-events: auto;
     z-index: 10;
+    gap: 600px;
 }
 
 .boton {
@@ -63,6 +64,7 @@
     user-select: none;
     border-radius: 6px;
     transition: background 0.2s ease;
+    
 }
 
 .boton:hover {

@@ -1,0 +1,161 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #1c2120;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+}
+
+.header {
+  background-color: #ffcc00;
+  color: #1c2120;
+  padding: 12px 400px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 50px;
+  width: 100px;
+}
+
+.header-icon {
+  display: flex;           /* <-- Alinea en fila horizontal */
+  gap: 4px;               /* Espacio entre íconos */
+  position: absolute;
+  top: 90px;
+  right: 50px;
+  background-color: #ffcc00;
+  padding: 13px 30px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 50px;
+  color: #fff;
+  cursor: pointer;
+}
+.header-icon a:hover { 
+  color: #4F5F2C;
+}
+
+.header-icon a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.header-icon a:hover {
+  color: #333; 
+  transform: scale(1.2); 
+}
+
+
+.login-box {
+  background-color: #4c5058;
+  padding: 60px;             /* un poco más de espacio */
+  border-radius: 20px;
+  width: 100%;
+  max-width: 700px;          /* apenas más ancho */
+  box-shadow: 0px 0px 22px rgba(0,0,0,0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;                 /* más separación entre elementos */
+  margin-left: -50px;        /* un poco a la izquierda */
+}
+
+/* Título */
+.login-title {
+  background-color: #ffcc00;
+  color: #000;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 20px;           /* más grande que antes (16px → 20px) */
+}
+
+/* Input group */
+.input-group {
+  display: flex;
+  align-items: center;
+  background-color: #121826;
+  padding: 14px;             /* un poco más de padding */
+  border-radius: 22px;
+}
+
+.input-group i {
+  margin-right: 10px;
+  color: #ffcc00;
+  font-size: 18px;           /* icono más grande */
+}
+
+.input-group input {
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  flex: 1;
+  font-size: 16px;           /* subido de 14px a 16px */
+}
+
+/* Forgot password */
+.forgot {
+  text-align: left;
+  font-size: 14px;           /* subido de 12px a 14px */
+  color: #ffcc00;
+  margin-top: -12px;
+}
+
+.forgot:hover {
+  color: #fff;
+}
+
+/* Botón */
+.btn {
+  background-color: #ffcc00;
+  border: none;
+  padding: 12px;             /* un poco más grande */
+  border-radius: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #000;
+  font-size: 16px;           /* de 14px → 16px */
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #e6b800;
+}
+
+
+/* Responsive */
+@media (max-width: 600px) {
+  .login-box {
+    padding: 40px;
+    max-width: 95%;
+    margin-left: 0;
+  }
+
+  .login-title {
+    font-size: 20px;
+    padding: 12px;
+  }
+
+  .input-group input {
+    font-size: 16px;
+  }
+
+  .btn {
+    font-size: 16px;
+    padding: 14px;
+  }
+}
+
+::placeholder {
+  color: white;
+  opacity: 1;
+}
