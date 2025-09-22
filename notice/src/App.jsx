@@ -53,8 +53,10 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         {/* Ruta para Creaciones */}
         <Route path="/creaciones" element={<Creaciones />} />
+        <Route path="/" element={<App/>}/>
       </Routes>
     </Router>
+    
   );
 };
 

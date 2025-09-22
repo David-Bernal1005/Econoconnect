@@ -12,7 +12,7 @@ const Menu = () => {
                 </Link>
             </ul>
             <ul>
-                <Link to="">
+                <Link to="/">
                     <img src="img/inicio.svg" alt="Inicio"/>
                     <span>Inicio</span>
                 </Link>
