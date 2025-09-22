@@ -26,11 +26,10 @@ const Login = () => {
       }
 
       const data = await res.json();
-      localStorage.setItem("token", data.access_token);
-
-      setMessage("Inicio de sesión exitoso");
-      // Si usas React Router → redirige con navigate
-      window.location.href = "/";
+  localStorage.setItem("token", data.access_token);
+  localStorage.setItem("nombre_usuario", data.name);
+  setMessage("Inicio de sesión exitoso");
+  window.location.href = "/";
     } catch (err) {
       setMessage(err.message);
     }

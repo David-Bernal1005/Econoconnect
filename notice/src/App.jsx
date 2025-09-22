@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Menu from "./Menu";
+import Bienvenida from "./Bienvenida";
 import Login from "./Login"; 
 import Search from "./Search";
 import Exit from "./Exit";
@@ -25,18 +26,35 @@ const App = () => {
     setSearching(result.searching);
   };
 
+  const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem("nombre_usuario"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("nombre_usuario");
+    setNombreUsuario("");
+    window.location.href = "/";
+  };
+
+  React.useEffect(() => {
+    setNombreUsuario(localStorage.getItem("nombre_usuario"));
+  }, []);
+
+  const isLogged = Boolean(localStorage.getItem("token"));
+
   return (
     <Router>
       <Routes>
-        {/* Ruta principal con tu layout */}
         <Route
           path="/"
           element={
             <div className="main-layout">
               <aside>
-                <Menu />
-                <Exit />
-                <Filter />
+                {isLogged && <Menu />}
+                {isLogged && <Exit />}
+                {isLogged && <Filter />}
+                {!isLogged && (
+                  <a href="/login" className="back-link" style={{position: 'fixed', top: 30, right: 30, zIndex: 9999, background: '#ffcc00', color: '#1c2120', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', textDecoration: 'none'}}>Login</a>
+                )}
               </aside>
               <div className="main-content">
                 <Search onSearch={handleSearch} />
@@ -44,6 +62,7 @@ const App = () => {
                   {searching ? (match ? <Notice /> : null) : <Carousel />}
                 </section>
               </div>
+              <Bienvenida name={nombreUsuario} onLogout={handleLogout} />
             </div>
           }
         />
