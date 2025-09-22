@@ -6,15 +6,30 @@ import { noticeData } from './data';
 
 function Search({ onSearch }) {
     const [searchTerm, setSearchTerm] = useState('');
+    const [apiResult, setApiResult] = useState(null);
 
-    const handleChange = (event) => {
+    const handleChange = async (event) => {
         const value = event.target.value;
         setSearchTerm(value);
         const searchLower = value.trim().toLowerCase();
-        const match =
-            searchLower &&
-            (noticeData.title.toLowerCase().includes(searchLower) ||
-                noticeData.text.toLowerCase().includes(searchLower));
+        let match = false;
+        // Ejemplo: llamada a la API FastAPI para buscar usuarios
+        if (searchLower) {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/v1/auth/search?username=${searchLower}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setApiResult(data);
+                    match = !!data && data.username && data.username.toLowerCase().includes(searchLower);
+                } else {
+                    setApiResult(null);
+                }
+            } catch (error) {
+                setApiResult(null);
+            }
+        } else {
+            setApiResult(null);
+        }
         onSearch({ match: !!match, searching: !!searchLower });
     };
 

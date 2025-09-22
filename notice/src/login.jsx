@@ -30,7 +30,7 @@ const Login = () => {
 
       setMessage("Inicio de sesión exitoso");
       // Si usas React Router → redirige con navigate
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     } catch (err) {
       setMessage(err.message);
     }
@@ -81,7 +81,18 @@ const Login = () => {
             Registrarse
           </Link>
 
-        <p id="message">{message}</p>
+        {message && (
+          <p
+            id="message"
+            style={{
+              marginTop: "10px",
+              color: message.includes("exitoso") ? "#388e3c" : "#d32f2f",
+              fontWeight: "bold"
+            }}
+          >
+            {message}
+          </p>
+        )}
         </div>
         </form>
       </div>

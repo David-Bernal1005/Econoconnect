@@ -42,7 +42,7 @@ e.preventDefault();
 const payload = { ...formData, etiquetas: selectedTags };
 console.log("Enviando creación:", payload);
 // Aquí iría la llamada al backend (fetch/axios)
-setMensaje("✅ Creación guardada correctamente");
+setMensaje("Creación guardada correctamente");
 };
 
 
