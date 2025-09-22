@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBolt, FaDoorClosed, FaEnvelope, FaLock } from "react-icons/fa";
+import { FaBolt, FaDoorClosed, FaUserCircle, FaLock } from "react-icons/fa";
 import "./login.css"; // ajusta la ruta si tu login.css está en otra carpeta
 
 const Login = () => {
@@ -39,8 +39,7 @@ const Login = () => {
   return (
     <div className="container">
       <div className="header-icon">
-        <FaBolt />
-        <a href="/login">
+        <a href="/">
           <FaDoorClosed />
         </a>
       </div>
@@ -52,11 +51,11 @@ const Login = () => {
           <div className="login-title">Bienvenido</div>
 
           <div className="input-group">
-            <FaEnvelope />
+            <FaUserCircle />
             <input
               type="text"
               value={username}
-              placeholder="username..."
+              placeholder=" Usuario..."
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
@@ -69,24 +68,23 @@ const Login = () => {
               placeholder="Contraseña..."
               onChange={(e) => setPassword(e.target.value)}
             />
-          </div>
-
-          <a href="/forgot">
-            <div className="forgot">¿Olvidaste tu contraseña?</div>
-          </a>
-          <Link to="/register" className="forgot">
-                Registrarse
-          </Link>
-
+        </div>
 
           <button className="btn" type="submit">
             Listo <span>🙂</span>
           </button>
-        </div>
-      </form>
 
-      <p id="message">{message}</p>
-    </div>
+          <a href="/forgot">
+            <div className="back-link">¿Olvidaste tu contraseña?</div>
+          </a>
+          <Link to="/register" className="back-link">
+            Registrarse
+          </Link>
+
+        <p id="message">{message}</p>
+        </div>
+        </form>
+      </div>
   );
 };
 

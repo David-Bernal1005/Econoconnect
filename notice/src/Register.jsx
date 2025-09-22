@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaUser, FaUserTag, FaPhone, FaHome, FaEnvelope, FaGlobe, FaUserCircle, FaLock, FaUserShield, FaDoorClosed } from "react-icons/fa";
 import "./register.css";
 
 const Register = () => {
@@ -31,106 +32,122 @@ const Register = () => {
 
   return (
     <div className="register-container">
-      <h2>Regístrate</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="usua_nombre">Nombres</label>
+      <div className="header-icon">
+        <a href="/">
+          <FaDoorClosed />
+        </a>
+      </div>
+      <div className="header">Regístrate</div>
+      <div className="register-box">
+        <div className="register-title">Bienvenido</div>
+        <form onSubmit={handleSubmit}>
+
+        <div className="input-group">
+          <FaUser />
           <input
             type="text"
             id="usua_nombre"
             name="usua_nombre"
             value={formData.usua_nombre}
+            placeholder=" Nombre..."            
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_apellido">Apellidos</label>
+        <div className="input-group">
+          <FaUserTag />
           <input
             type="text"
             id="usua_apellido"
             name="usua_apellido"
             value={formData.usua_apellido}
+            placeholder=" Apellido..."
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_celular">Celular</label>
+        <div className="input-group">
+          <FaPhone />
           <input
             type="text"
             id="usua_celular"
             name="usua_celular"
             value={formData.usua_celular}
+            placeholder=" Celular..."
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_direccion">Dirección</label>
+        <div className="input-group">
+          <FaHome />
           <input
             type="text"
             id="usua_direccion"
             name="usua_direccion"
             value={formData.usua_direccion}
+            placeholder=" Dirección..."
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_email">Email</label>
+        <div className="input-group">
+          <FaEnvelope />
           <input
             type="email"
             id="usua_email"
             name="usua_email"
             value={formData.usua_email}
+            placeholder=" Email..."
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_pais">País</label>
+        <div className="input-group">
+          <FaGlobe />
           <input
             type="text"
             id="usua_pais"
             name="usua_pais"
             value={formData.usua_pais}
+            placeholder=" País..."
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_usuario">Usuario</label>
+        <div className="input-group">
+          <FaUserCircle />
           <input
             type="text"
             id="usua_usuario"
             name="usua_usuario"
             value={formData.usua_usuario}
+            placeholder=" Usuario..."
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_password">Contraseña</label>
+        <div className="input-group">
+          <FaLock />
           <input
             type="password"
             id="usua_password"
             name="usua_password"
             value={formData.usua_password}
+            placeholder=" Contraseña..."
             onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="usua_rol_fk">Rol</label>
+        <div className="input-group">
+          <FaUserShield />
           <select
             id="usua_rol_fk"
             name="usua_rol_fk"
             value={formData.usua_rol_fk}
             onChange={handleChange}
           >
-            <option disabled>administrador</option>
-            <option value="usuario">usuario</option>
+            <option disabled>Administrador</option>
+            <option value="usuario">Usuario</option>
           </select>
         </div>
 
@@ -139,11 +156,14 @@ const Register = () => {
 
       {mensaje && (
         <div id="mensaje" style={{ marginTop: "10px", color: "#d32f2f" }}>
-          {mensaje}
-        </div>
+      {mensaje}
+      </div>
       )}
-
       <a href="/login" className="back-link">Login</a>
+      </div>
+
+
+
     </div>
   );
 };

@@ -16,6 +16,7 @@
 
 }
 
+
 .slides {
     display: flex;
     transition: transform 0.5s ease-in-out;
@@ -51,7 +52,7 @@
     transform: translateY(-50%);
     pointer-events: auto;
     z-index: 10;
-    gap: 600px;
+    gap: 85%;
 }
 
 .boton {
@@ -64,7 +65,6 @@
     user-select: none;
     border-radius: 6px;
     transition: background 0.2s ease;
-    
 }
 
 .boton:hover {

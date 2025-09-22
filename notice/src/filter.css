@@ -1,7 +1,7 @@
 .filter {
     position: absolute;
-    top: 52px;
-    right: 28%;
+    top: 5%;
+    right: 28.8%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -20,6 +20,6 @@
 }
 
 .filter img {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
 }

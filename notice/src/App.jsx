@@ -9,7 +9,7 @@ import Carousel from "./Carousel";
 import Notice from "./Notice";
 import Filter from "./Filter";
 import Register from "./register";
-
+import Creaciones from "./Creaciones";
 
 
 
@@ -51,6 +51,8 @@ const App = () => {
         {/* Ruta de login */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        {/* Ruta para Creaciones */}
+        <Route path="/creaciones" element={<Creaciones />} />
       </Routes>
     </Router>
   );
