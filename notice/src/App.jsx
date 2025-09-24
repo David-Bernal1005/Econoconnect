@@ -13,6 +13,7 @@ import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
+import Perfil from "./Perfil"
 
 
 import "./app.css";
@@ -81,14 +82,15 @@ const App = () => {
           }
         />
 
-        {/* Ruta de login */}
-        <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/forgot-password" element={<ForgotPassword />} />
-        {/* Ruta para Creaciones */}
-  <Route path="/creaciones" element={<Creaciones />} />
-  <Route path="/misnoticias" element={<MisNoticias />} />
-        <Route path="/" element={<App/>}/>
+  {/* Ruta de login */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      {/* Ruta para Creaciones */}
+      <Route path="/creaciones" element={<Creaciones />} />
+      <Route path="/perfil" element={<Perfil />} />
+      <Route path="/misnoticias" element={<MisNoticias />} />
+      <Route path="/" element={<App/>}/>
       </Routes>
     </Router>
   );

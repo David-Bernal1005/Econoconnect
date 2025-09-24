@@ -1,0 +1,372 @@
+body{
+    background-color: #1c2120;
+}
+/*Inicio slidebar*/
+.slidebar {
+    position: fixed;
+    top: 40px;
+    left: 20px;
+    width: 6%;
+    height: 85%;
+    background-color: #3a3a3d; /* gris oscuro */
+    border-radius: 40px;
+    display: flex;
+    padding-top: 40px;
+    z-index: 100;
+    flex-direction: column;
+}
+
+/* Lista */
+.slidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 70px;
+    text-align: center;
+} 
+
+.slidebar a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 19px;
+    transition: transform 0.2s ease;
+}
+
+
+/* Icono */
+.slidebar img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px;
+}
+/*Fin slidebar*/
+
+/*Inicio search*/
+.search {
+    width: max-content;
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    border-radius: 30px;
+    background-color: #f1c40f;
+    transition: box-shadow 0.25s;
+    height: 5px;
+}
+.search:focus-within {
+    box-shadow: 0 0 2px rgba(250, 249, 249, 0.75);
+}
+.search-input {
+    font-size: 16px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #3a3a3d;
+    margin-left: 14px;
+    outline: none;
+    border: none;
+    background:transparent ;
+    width: 400px;
+}
+.search-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px; /* importante en móviles */
+    box-sizing: border-box;
+}
+
+
+/*Final search*/
+
+.sign-out {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 40px;
+    background-color: #f1c40f;
+    padding: 10px 28px;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+}
+
+.sign-out a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.sign-out img {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 5px;
+
+}
+
+/* Botón volver */
+.back-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    background: #ffcc00;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.back-btn:hover {
+    background: #e6b800;
+    transform: scale(1.05);
+}
+
+
+/* Carrusel */
+.carrusel {
+    position: relative;
+    width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 20px 32px rgba(255, 253, 253, 0.2);
+    height: 500px;
+    margin: 200px auto; /* 200px arriba y abajo, auto a izquierda y derecha */
+}
+
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    min-width: 500px;
+    user-select: none;
+}
+
+.slide img {
+    width: 90%;
+    display: block;
+    border-radius: 10px;
+    margin: 0 auto; /* Esto centra la imagen dentro del .slide */
+}
+
+
+.botones {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.boton {
+    background: rgba(0,0,0,0.5);
+    border: none;
+    color: white;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    user-select: none;
+}
+
+.boton:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+.notice {
+    width: 90%;
+    height: 400px;
+    background-color: #3a3a3d;
+    border-radius: 10px;
+    margin: 0 auto; /* Esto centra la imagen dentro del .slide */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+}
+
+
+
+.profile-card1 {
+    background-color: #fef5e8;
+    border-radius: 5px;
+    width: 550px; /* Aumenté de 320px a 380px */
+    box-sizing: border-box;
+    color: #111;
+    margin-left: 180px; 
+    margin-top: 100px;
+    padding-bottom: 100px;
+
+}
+.i1 {
+    display: flex
+}
+
+.profile-header {
+    position: relative;
+}
+
+.header-img {
+    width: 100%;
+    height: 260px; /* Imagen más alta */
+    object-fit: cover;
+    border-radius: 5px 5px 0 0;
+}
+
+.profile-pic {
+    position: absolute;
+    bottom: -50px; /* Baja la imagen de perfil */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    border-radius: 50%;
+    width: 120px; /* Más grande */
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-pic img {
+    width: 150px;
+    height: 120px;
+    border-radius: 50%; /* asegura forma circular */
+    object-fit: cover;  /* rellena sin deformar */
+}
+
+.profile-card1 h2 {
+    text-align: center;
+    margin-top: 80px;
+    font-weight: 60;
+    font-size: 60px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+
+/* Ajustes para los iconos y texto */
+.profile-info1 {
+    margin-top: 20px;
+}
+
+.profile-info1 div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.profile-info1 img {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+}
+
+.profile-info1 span {
+    font-size: 16px;
+    color: #333;
+}
+
+/* Social Info */
+.social-info1 {
+    padding: 0 20px;
+}
+
+.social-row {
+    margin-top: 10px;
+    border-radius: 2px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.social-row img {
+    width: 70px;
+    height: 70px;
+}
+
+.social-row span {
+    font-size: 25px;
+}
+
+.twitter-handle {
+    margin-left: auto;
+    color: #999;
+}
+
+.phone-handle {
+    margin-left: auto;
+    color: #999;
+}
+
+.linea-negra {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid black;
+    margin-top: 10px;
+}
+
+.profile-details {
+  width: 1110px;
+  background-color: #fef5e8;
+  padding: 20px;
+  border: 1px solid #111;
+  margin: 20px auto 40px auto;
+  box-sizing: border-box;
+  padding-bottom: 360px;
+  height: 300px;
+  margin-right: 10px;
+  margin-top: 100px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #111;
+  padding: 10px 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 35px;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-weight: bold;
+  color: #111;
+  width: 30%;
+  font-size: 30px;
+}
+
+.value {
+  color: #333;
+  width: 65%;
+  text-align: right;
+  font-size: 30px;
+}
+
+.info-button {
+  margin-top: 15px;
+  text-align: left;
+}
+
+.info-button button {
+  background-color: #111;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Open Sans', sans-serif;
+}

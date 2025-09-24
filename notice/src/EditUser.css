@@ -1,0 +1,86 @@
+body {
+  background-color: #1c2120; /* mismo fondo que tu diseño */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* ocupa toda la pantalla */
+  margin: 0;
+}
+
+.edit-user {
+  width: 700px;
+  padding: 40px;
+  background: #3a3a3d; /* gris oscuro como slidebar */
+  border-radius: 20px;
+  box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.4);
+  font-family: "Open Sans", sans-serif;
+  color: white;
+}
+
+.edit-user h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  font-size: 2.5rem;
+  color: #f1c40f; /* Amarillo */
+  letter-spacing: 1px;
+}
+
+.edit-user form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.edit-user .info-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-user .label {
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #f1c40f;
+}
+
+.edit-user .value {
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  background: #1c2120; /* Fondo igual al body */
+  color: #fff;
+  font-size: 1.05rem;
+  transition: box-shadow 0.3s, background 0.3s;
+  text-align: left;   
+  direction: ltr;  /* asegura dirección de izquierda a derecha */
+  width: 95%; /* ocupa todo el ancho disponible */
+}
+
+
+.edit-user .value:focus {
+  background: #2b2f2f;
+  box-shadow: 0 0 8px rgba(241, 196, 15, 0.8);
+  outline: none;
+}
+
+.edit-user .info-button {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.edit-user .info-button button {
+  background: #f1c40f;
+  color: #111;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s;
+}
+
+.edit-user .info-button button:hover {
+  background: #e6b800;
+  transform: scale(1.05);
+}
