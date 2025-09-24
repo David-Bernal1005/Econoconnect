@@ -3,17 +3,16 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Menu from "./Menu";
 import Bienvenida from "./Bienvenida";
-import Login from "./Login"; 
+import Login from "./login"; 
 import Search from "./Search";
 import Exit from "./Exit";
 import Carousel from "./Carousel";
 import Notice from "./Notice";
 import Filter from "./Filter";
-import Register from "./register";
+import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
-
 
 
 import "./app.css";

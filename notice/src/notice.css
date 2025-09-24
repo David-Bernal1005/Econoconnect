@@ -57,9 +57,6 @@
   width: 48px;
   height: 48px;
   object-fit: cover;
-}
-
-
   background-color: #fff6ea;
   color: #000;
   padding: 2px 8px;
@@ -132,12 +129,10 @@
   }
   .news-text {
     font-size: 13px;
-  }
+    padding: 4px 8px;
+    font-size: 18px;
+    margin-left: 20px;
 }
-  padding: 4px 8px;
-  font-size: 18px;
-  margin-left: 20px;
-
 }
 
 .news-box {
