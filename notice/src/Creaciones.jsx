@@ -15,23 +15,33 @@ export default function Creaciones() {
     soporte: "",
   });
 
-  const allTags = [
-    "Renta Variable",
-    "Divisas",
-    "Criptomonedas",
-    "Noticias",
-  ];
-
-  const [selectedTags, setSelectedTags] = useState([...allTags]);
+  const [allTags, setAllTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [mensaje, setMensaje] = useState("");
   const [noticias, setNoticias] = useState([]);
-  const [filteredNoticias, setFilteredNoticias] = useState([]);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [loadingNoticias, setLoadingNoticias] = useState(false);
 
-  // Cargar todas las noticias
+  // Cargar categorías y noticias
   useEffect(() => {
+    async function fetchCategorias() {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/v1/categorias");
+        const data = await res.json();
+        let tags = Array.isArray(data) ? data.map(cat => cat.Nombre_Categoria) : [];
+        // Fallback si la API no responde o no hay categorías
+        if (!tags.length) {
+          tags = ["Renta Variable", "Divisas", "Criptomonedas", "Noticias"];
+        }
+        setAllTags(tags);
+        setSelectedTags(prev => prev.length === 0 ? tags : prev);
+      } catch (err) {
+        const tags = ["Renta Variable", "Divisas", "Criptomonedas", "Noticias"];
+        setAllTags(tags);
+        setSelectedTags(tags);
+      }
+    }
     async function fetchNoticias() {
       setLoadingNoticias(true);
       try {
@@ -43,25 +53,18 @@ export default function Creaciones() {
       }
       setLoadingNoticias(false);
     }
+    fetchCategorias();
     fetchNoticias();
   }, []);
-
-  useEffect(() => {
-    // Filtrar noticias según las etiquetas seleccionadas
-    if (selectedTags.length === 0) {
-      setFilteredNoticias([]);
-    } else {
-      setFilteredNoticias(
-        noticias.filter(n => selectedTags.includes(n.categoria || n.Categoria || n.Nombre_Categoria))
-      );
-    }
-  }, [noticias, selectedTags]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+      // Filtrar noticias por etiquetas seleccionadas (solo las que existen en la tabla categorias y están seleccionadas)
+      const activeTags = allTags.filter(t => selectedTags.includes(t));
+      const noticiasFiltradas = noticias.filter(n => activeTags.includes(n.categoria || n.Categoria || n.Nombre_Categoria));
   const toggleTag = (tag) => {
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
@@ -171,6 +174,9 @@ export default function Creaciones() {
     setTimeout(() => setMensaje(""), 4000);
   };
 
+  // Filtrar noticias por etiquetas seleccionadas
+  // Eliminada declaración duplicada de noticiasFiltradas
+
   return (
     <div className="creaciones-root">
       <div className="creaciones-layout">
@@ -217,26 +223,31 @@ export default function Creaciones() {
                   type="url"
                   className="input-title"
                   placeholder="Pega aquí la URL de soporte"
-                  value={formData.soporte}
                   name="soporte"
-                  onChange={e => setFormData(prev => ({ ...prev, soporte: e.target.value }))}
+                  value={formData.soporte}
+                  onChange={handleChange}
                 />
               </div>
             </div>
             <div className="field">
               <label className="field-label">Etiquetas</label>
               <div className="tags">
-                {allTags.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    className={`tag-pill ${selectedTags.includes(t) ? 'tag-active' : ''}`}
-                    onClick={() => toggleTag(t)}
-                  >
-                    <span className="tag-x">×</span>
-                    <span className="tag-text">{t}</span>
-                  </button>
-                ))}
+                {allTags.length === 0 ? (
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>No hay etiquetas disponibles</span>
+                ) : (
+                  allTags.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`tag-pill ${selectedTags.includes(t) ? 'tag-active' : ''}`}
+                      onClick={() => toggleTag(t)}
+                      style={{ cursor: 'pointer', margin: '0 8px 8px 0', fontWeight: 'bold', fontSize: '18px', padding: '12px 32px', background: selectedTags.includes(t) ? '#f1c40f' : '#555a62', color: selectedTags.includes(t) ? '#232627' : '#fff', border: 'none', borderRadius: '22px', transition: 'background 0.2s' }}
+                    >
+                      <span className="tag-x">×</span>
+                      <span className="tag-text">{t}</span>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
             <div className="actions">
@@ -244,13 +255,14 @@ export default function Creaciones() {
               <button className="btn-publish" type="submit">Publicar</button>
             </div>
           </form>
-          {/* Mostrar solo las noticias filtradas por etiquetas */}
+          {/* Mostrar noticias filtradas por etiquetas seleccionadas */}
           <div className="noticias-list">
-            {filteredNoticias.map((noticia) => (
-              <div key={noticia.Id_Noticia} className="noticia-item">
-                <h3>{noticia.titulo}</h3>
-                <p>{noticia.resumen}</p>
-                <span className="noticia-categoria">{noticia.categoria || noticia.Categoria || noticia.Nombre_Categoria}</span>
+            {noticiasFiltradas.map((n, idx) => (
+              <div key={idx} className="news-container">
+                <h3>{n.titulo}</h3>
+                <p>{n.resumen}</p>
+                {n.enlace && <a href={n.enlace} target="_blank" rel="noopener noreferrer">{n.enlace}</a>}
+                <div style={{ fontSize: '0.9rem', color: '#f1c40f', marginTop: 8 }}>{n.categoria || n.Categoria || n.Nombre_Categoria}</div>
               </div>
             ))}
           </div>
