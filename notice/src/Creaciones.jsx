@@ -25,6 +25,7 @@ export default function Creaciones() {
   const [selectedTags, setSelectedTags] = useState([...allTags]);
   const [mensaje, setMensaje] = useState("");
   const [noticias, setNoticias] = useState([]);
+  const [filteredNoticias, setFilteredNoticias] = useState([]);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [loadingNoticias, setLoadingNoticias] = useState(false);
@@ -44,6 +45,17 @@ export default function Creaciones() {
     }
     fetchNoticias();
   }, []);
+
+  useEffect(() => {
+    // Filtrar noticias según las etiquetas seleccionadas
+    if (selectedTags.length === 0) {
+      setFilteredNoticias([]);
+    } else {
+      setFilteredNoticias(
+        noticias.filter(n => selectedTags.includes(n.categoria || n.Categoria || n.Nombre_Categoria))
+      );
+    }
+  }, [noticias, selectedTags]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -232,6 +244,16 @@ export default function Creaciones() {
               <button className="btn-publish" type="submit">Publicar</button>
             </div>
           </form>
+          {/* Mostrar solo las noticias filtradas por etiquetas */}
+          <div className="noticias-list">
+            {filteredNoticias.map((noticia) => (
+              <div key={noticia.Id_Noticia} className="noticia-item">
+                <h3>{noticia.titulo}</h3>
+                <p>{noticia.resumen}</p>
+                <span className="noticia-categoria">{noticia.categoria || noticia.Categoria || noticia.Nombre_Categoria}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
