@@ -1,5 +1,4 @@
 /* Wrapper para centrar el carousel vertical y horizontal */
-
 .main-content {
     min-height: 100vh;
     width: 100vw;
@@ -9,59 +8,11 @@
     background: transparent;
 }
 
-.carousel-container {
-    width: 100%;
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.carousel {
-        position: static;
-        width: 80vw;
-        height: 60vh;
-        border-radius: 10px;
-        background-color: transparent;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        box-sizing: border-box;
-    }
-
-    .slides {
-        display: flex;
-        transition: transform 0.5s ease-in-out;
-        height: 100%;
-        box-sizing: content-box;
-    }
-
-    .slide {
-        min-width: 40%;
-        user-select: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        transition: transform 0.3s ease;
-    }
-
-
-    .carousel-container {
-        width: 100%;
-        max-width: 900px;
-        min-height: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
 
     .carousel {
         position: static;
         width: 80vw;
-        max-width: 700px;
         height: 60vh;
-        min-height: 320px;
         border-radius: 10px;
         background-color: transparent;
         display: flex;
@@ -79,7 +30,6 @@
 
     .slide {
         min-width: 40%;
-        max-width: 90vw;
         user-select: none;
         display: flex;
         align-items: center;
@@ -92,7 +42,6 @@
     .slide > * {
         border-radius: 10px;
         object-fit: contain;
-        max-width: 100%;
     }
 
     /* Botones */
@@ -103,38 +52,22 @@
         display: flex;
         justify-content: space-between;
         transform: translateY(-50%);
+        pointer-events: auto;
+        z-index: 10;
     }
 
-    @media (max-width: 900px) {
-        .carousel-container {
-            max-width: 100vw;
-            min-height: 220px;
-        }
-        .carousel {
-            width: 98vw;
-            max-width: 98vw;
-            height: 40vh;
-            min-height: 180px;
-        }
-        .slide {
-            min-width: 80vw;
-            max-width: 98vw;
-        }
+    .boton {
+        background: #4c5058;
+        border: none;
+        color: white;
+        font-size: 24px;
+        padding: 15px;
+        cursor: pointer;
+        user-select: none;
+        border-radius: 6px;
+        transition: background 0.2s ease;
     }
 
-    @media (max-width: 600px) {
-        .carousel-container {
-            min-height: 120px;
-        }
-        .carousel {
-            height: 28vh;
-            min-height: 100px;
-        }
-        .slide {
-            min-width: 98vw;
-            max-width: 100vw;
-        }
-        .botones {
-            width: 90vw;
-        }
+    .boton:hover {
+        background: #1c2120;
     }
