@@ -10,24 +10,41 @@ import Carousel from "./Carousel";
 import Notice from "./Notice";
 import Filter from "./Filter";
 import Register from "./register";
-import Creaciones from "./Creaciones";
+import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
+import Creaciones from "./Creaciones";
 
 
 
 import "./app.css";
 import { noticeData } from "./data";
 
+
 const App = () => {
   const [match, setMatch] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [noticias, setNoticias] = useState([]);
+  const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem("nombre_usuario"));
+
+  React.useEffect(() => {
+    setNombreUsuario(localStorage.getItem("nombre_usuario"));
+    // Fetch noticias from backend
+    fetch("http://localhost:8000/api/v1/noticias")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setNoticias(data);
+        } else {
+          setNoticias([]);
+        }
+      })
+      .catch(() => setNoticias([]));
+  }, []);
 
   const handleSearch = (result) => {
     setMatch(result.match);
     setSearching(result.searching);
   };
-
-  const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem("nombre_usuario"));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -36,16 +53,11 @@ const App = () => {
     window.location.href = "/";
   };
 
-  React.useEffect(() => {
-    setNombreUsuario(localStorage.getItem("nombre_usuario"));
-  }, []);
-
   const isLogged = Boolean(localStorage.getItem("token"));
 
   return (
     <Router>
       <Routes>
-        <Route path="/misnoticias" element={<MisNoticias />} />
         <Route
           path="/"
           element={
@@ -59,9 +71,10 @@ const App = () => {
                 )}
               </aside>
               <div className="main-content">
-                <Search onSearch={handleSearch} />
+                <Search noticias={noticias} onSearch={handleSearch} />
                 <section className="content-section">
-                  {searching ? (match ? <Notice /> : null) : <Carousel />}
+                  {/* Only show Carousel if not searching, otherwise Search.jsx will show the centered card */}
+                  {!searching && <Carousel />}
                 </section>
               </div>
               <Bienvenida name={nombreUsuario} onLogout={handleLogout} />
@@ -71,13 +84,14 @@ const App = () => {
 
         {/* Ruta de login */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+  <Route path="/register" element={<Register />} />
+  <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* Ruta para Creaciones */}
-        <Route path="/creaciones" element={<Creaciones />} />
+  <Route path="/creaciones" element={<Creaciones />} />
+  <Route path="/misnoticias" element={<MisNoticias />} />
         <Route path="/" element={<App/>}/>
       </Routes>
     </Router>
-    
   );
 };
 

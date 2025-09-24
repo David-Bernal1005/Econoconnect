@@ -28,12 +28,42 @@
     width: 400px;
 }
 
+
 .search-container {
     display: flex;
-    justify-content: center;
-    padding: 20px; /* importante en móviles */
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
     box-sizing: border-box;
-    margin-top: -340px;
+    margin-top: 60px; /* Espacio extra debajo del input */
+    min-height: 100vh;
+}
+
+.search-results {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    margin-top: 32px;
+}
+
+.search-result-item {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.news-container {
+    background: #4c5058;
+    border-radius: 20px;
+    margin: 0 auto;
+    max-width: 660px;
+    width: 100%;
+    padding: 30px 30px 20px 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 /*Final search*/

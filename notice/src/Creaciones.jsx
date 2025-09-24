@@ -171,21 +171,6 @@ export default function Creaciones() {
             target="_blank"
             rel="noopener noreferrer"
             className="mis-noticias-btn"
-            style={{
-              display: 'inline-block',
-              padding: '12px 24px',
-              margin: '16px 0',
-              background: 'linear-gradient(90deg, #0077ff 0%, #00c6ff 100%)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 'bold',
-              fontSize: '1rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-              cursor: 'pointer',
-              textDecoration: 'none',
-              transition: 'background 0.3s',
-            }}
           >
             Ver y editar mis noticias
           </a>

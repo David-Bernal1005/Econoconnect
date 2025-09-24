@@ -4,51 +4,63 @@ import "./register.css";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    lastname: "",
-    cellphone: "",
-    direction: "",
-    email: "",
-    country: "",
-    username: "",
-    password: "",
-    rol: "usuario",
-    state: "activo"
+    usua_nombre: "",
+    usua_apellido: "",
+    usua_celular: "",
+    usua_direccion: "",
+    usua_email: "",
+    usua_pais: "",
+    usua_usuario: "",
+    usua_password: "",
+    usua_rol_fk: "usuario",
   });
 
   const [mensaje, setMensaje] = useState("");
+  const [mensajeColor, setMensajeColor] = useState("#d32f2f");
 
   const handleChange = (e) => {
-  setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    fetch("http://localhost:8000/api/v1/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    })
-      .then(async (res) => {
-        if (res.ok) {
-          setMensaje("✅ Registro exitoso");
-        } else {
-          const error = await res.text();
-          setMensaje("❌ Error: " + error);
-        }
-      })
-      .catch((err) => {
-        setMensaje("❌ Error de conexión");
+    setMensaje("");
+    setMensajeColor("#d32f2f");
+    try {
+  const response = await fetch("http://localhost:8000/api/v1/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.usua_nombre,
+          lastname: formData.usua_apellido,
+          cellphone: formData.usua_celular,
+          direction: formData.usua_direccion,
+          email: formData.usua_email,
+          country: formData.usua_pais,
+          username: formData.usua_usuario,
+          password: formData.usua_password,
+          rol: formData.usua_rol_fk,
+        }),
       });
+      if (response.ok) {
+        setMensaje("✅ Registro exitoso");
+        setMensajeColor("#388e3c");
+      } else {
+        const data = await response.json();
+        setMensaje(data.detail || "Error en el registro");
+        setMensajeColor("#d32f2f");
+      }
+    } catch (err) {
+      setMensaje("Error de conexión");
+      setMensajeColor("#d32f2f");
+    }
   };
 
   return (
     <div className="register-container">
-      <div className="header-icon">
+      <div className="sign-out">
         <a href="/">
-          <FaDoorClosed />
+          <img src="img/exit.svg" alt="Exit" />
         </a>
       </div>
       <div className="header">Regístrate</div>
@@ -60,9 +72,9 @@ const Register = () => {
           <FaUser />
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="usua_nombre"
+            name="usua_nombre"
+            value={formData.usua_nombre}
             placeholder=" Nombre..."            
             onChange={handleChange}
           />
@@ -72,9 +84,9 @@ const Register = () => {
           <FaUserTag />
           <input
             type="text"
-            id="lastname"
-            name="lastname"
-            value={formData.lastname}
+            id="usua_apellido"
+            name="usua_apellido"
+            value={formData.usua_apellido}
             placeholder=" Apellido..."
             onChange={handleChange}
           />
@@ -84,9 +96,9 @@ const Register = () => {
           <FaPhone />
           <input
             type="text"
-            id="cellphone"
-            name="cellphone"
-            value={formData.cellphone}
+            id="usua_celular"
+            name="usua_celular"
+            value={formData.usua_celular}
             placeholder=" Celular..."
             onChange={handleChange}
           />
@@ -96,9 +108,9 @@ const Register = () => {
           <FaHome />
           <input
             type="text"
-            id="direction"
-            name="direction"
-            value={formData.direction}
+            id="usua_direccion"
+            name="usua_direccion"
+            value={formData.usua_direccion}
             placeholder=" Dirección..."
             onChange={handleChange}
           />
@@ -108,9 +120,9 @@ const Register = () => {
           <FaEnvelope />
           <input
             type="email"
-            id="email"
-            name="email"
-            value={formData.email}
+            id="usua_email"
+            name="usua_email"
+            value={formData.usua_email}
             placeholder=" Email..."
             onChange={handleChange}
           />
@@ -120,9 +132,9 @@ const Register = () => {
           <FaGlobe />
           <input
             type="text"
-            id="country"
-            name="country"
-            value={formData.country}
+            id="usua_pais"
+            name="usua_pais"
+            value={formData.usua_pais}
             placeholder=" País..."
             onChange={handleChange}
           />
@@ -132,9 +144,9 @@ const Register = () => {
           <FaUserCircle />
           <input
             type="text"
-            id="username"
-            name="username"
-            value={formData.username}
+            id="usua_usuario"
+            name="usua_usuario"
+            value={formData.usua_usuario}
             placeholder=" Usuario..."
             onChange={handleChange}
           />
@@ -144,9 +156,9 @@ const Register = () => {
           <FaLock />
           <input
             type="password"
-            id="password"
-            name="password"
-            value={formData.password}
+            id="usua_password"
+            name="usua_password"
+            value={formData.usua_password}
             placeholder=" Contraseña..."
             onChange={handleChange}
           />
@@ -155,12 +167,12 @@ const Register = () => {
         <div className="input-group">
           <FaUserShield />
           <select
-            id="rol"
-            name="rol"
-            value={formData.rol}
+            id="usua_rol_fk"
+            name="usua_rol_fk"
+            value={formData.usua_rol_fk}
             onChange={handleChange}
           >
-            <option value="administrador">Administrador</option>
+            <option disabled>Administrador</option>
             <option value="usuario">Usuario</option>
           </select>
         </div>
@@ -169,14 +181,7 @@ const Register = () => {
       </form>
 
       {mensaje && (
-        <div
-          id="mensaje"
-          style={{
-            marginTop: "10px",
-            color: mensaje.includes("exitoso") ? "#388e3c" : "#d32f2f",
-            fontWeight: "bold"
-          }}
-        >
+        <div id="mensaje" style={{ marginTop: "10px", color: mensajeColor, fontWeight: "bold" }}>
           {mensaje}
         </div>
       )}
