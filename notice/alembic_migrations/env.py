@@ -8,37 +8,37 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 # Importar engine, MARIADB_URL y Base
-from backend.app.db.session import engine, MARIADB_URL, Base
+from app.db.session import engine, MARIADB_URL, Base
 
 # Importar el modelo User
-from backend.app.models.user import User
-from backend.app.models.adjunto import Adjunto
-from backend.app.models.auditoriausuarioestado import AuditoriaUsuarioEstado
-from backend.app.models.categorias import Categoria
-from backend.app.models.chat import Chat
-from backend.app.models.chatmensaje import ChatMensaje
-from backend.app.models.chatmensajeadjunto import ChatMensajeAdjunto
-from backend.app.models.chatmiembro import ChatMiembro
-from backend.app.models.comentario import Comentario
-from backend.app.models.comentarionoticias import ComentarioNoticia
-from backend.app.models.comentariopublicaciones import ComentarioPublicacion
-from backend.app.models.cometarioadjunto import ComentarioAdjunto
-from backend.app.models.datografica import DatoGrafica
-from backend.app.models.etiqueta import Etiqueta
-from backend.app.models.foro import Foro
-from backend.app.models.fuentes import Fuente
-from backend.app.models.grafica import Grafica
-from backend.app.models.noticias import Noticia
-#from backend.app.models.notificaciones import Notificacion
-from backend.app.models.publicacion import Publicacion
-from backend.app.models.publicacionadjunto import PublicacionAdjunto
-from backend.app.models.publicacionetiqueta import PublicacionEtiqueta
-from backend.app.models.reacciones import Reaccion
-from backend.app.models.rol import Rol
-from backend.app.models.tiposcontenido import TipoContenido
-from backend.app.models.usuariorol import UsuarioRol
-from backend.app.models.usuarioseguidor import UsuarioSeguidor
-from backend.app.models.usuarioseguido import UsuarioSeguido
+from app.models.user import User
+from app.models.adjunto import Adjunto
+from app.models.auditoriausuarioestado import AuditoriaUsuarioEstado
+from app.models.categorias import Categoria
+from app.models.chat import Chat
+from app.models.chatmensaje import ChatMensaje
+from app.models.chatmensajeadjunto import ChatMensajeAdjunto
+from app.models.chatmiembro import ChatMiembro
+from app.models.comentario import Comentario
+from app.models.comentarionoticias import ComentarioNoticia
+from app.models.comentariopublicaciones import ComentarioPublicacion
+from app.models.cometarioadjunto import ComentarioAdjunto
+from app.models.datografica import DatoGrafica
+from app.models.etiqueta import Etiqueta
+from app.models.foro import Foro
+from app.models.fuentes import Fuente
+from app.models.grafica import Grafica
+from app.models.noticias import Noticia
+#from app.models.notificaciones import Notificacion
+from app.models.publicacion import Publicacion
+from app.models.publicacionadjunto import PublicacionAdjunto
+from app.models.publicacionetiqueta import PublicacionEtiqueta
+from app.models.reacciones import Reaccion
+from app.models.rol import Rol
+from app.models.tiposcontenido import TipoContenido
+from app.models.usuariorol import UsuarioRol
+from app.models.usuarioseguidor import UsuarioSeguidor
+from app.models.usuarioseguido import UsuarioSeguido
 
 config = context.config
 

@@ -3,7 +3,7 @@ import './filter.css';
 
 const Filter = () => {
     return (
-        <div class="filter">
+        <div className="filter">
             <a href=""><img src="img/filter.svg" alt="Filter"/>
             </a>        
         </div>

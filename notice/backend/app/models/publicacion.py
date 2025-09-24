@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Enum, ForeignKey, TIMESTAMP
 from sqlalchemy.sql import func
-from backend.app.db.session import Base
+from app.db.session import Base
 
 class Publicacion(Base):
     __tablename__ = "publicacion"

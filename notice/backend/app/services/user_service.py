@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash
 from sqlalchemy.orm import Session
-from backend.app.models.user import User, RoleEnum, StateUser
-from backend.app.core.security import get_password_hash
+from app.models.user import User, RoleEnum, StateUser
+from app.core.security import get_password_hash
 
 def get_user_by_username(db: Session, username: str) -> User | None:
     return db.query(User).filter(User.username == username).first()

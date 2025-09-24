@@ -10,6 +10,7 @@
     background-color: #f1c40f;
     transition: box-shadow 0.25s;
     height: 5px;
+    left: 28.7%;
 }
 
 .search:focus-within {

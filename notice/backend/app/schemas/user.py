@@ -1,8 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, constr, Field
-#from backend.app.api.v1.endpoints.auth import RoleEnum
+from app.models.user import StateUser
 from enum import Enum
-from backend.app.models.user import StateUser
 
 class RoleEnum(str, Enum):
     administrador = "administrador"

@@ -11,6 +11,7 @@ import Notice from "./Notice";
 import Filter from "./Filter";
 import Register from "./register";
 import Creaciones from "./Creaciones";
+import MisNoticias from "./MisNoticias";
 
 
 
@@ -44,6 +45,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/misnoticias" element={<MisNoticias />} />
         <Route
           path="/"
           element={
