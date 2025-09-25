@@ -34,7 +34,7 @@ def update_noticia(noticia_id: int, noticia: NoticiaUpdateSchema = Body(...), db
     if not noticia_db:
         print(f"[DEBUG] No se encontró la noticia con ID: {noticia_id}")
         raise HTTPException(status_code=404, detail="Noticia no encontrada")
-    for field, value in noticia.dict(exclude_unset=True).items():
+    for field, value in noticia.model_dump(exclude_unset=True).items():
         setattr(noticia_db, field, value)
     db.commit()
     db.refresh(noticia_db)

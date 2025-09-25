@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, constr, Field
+from pydantic import BaseModel, EmailStr
 from app.models.user import StateUser
 from enum import Enum
 
@@ -38,5 +38,6 @@ class UserResponse(BaseModel):
     last_activity_date: datetime 
     number_followers: int
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }

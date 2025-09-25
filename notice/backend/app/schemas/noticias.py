@@ -13,5 +13,6 @@ class NoticiaSchema(BaseModel):
     usuario: Optional[str] = None
     activa: Optional[int] = 1
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
