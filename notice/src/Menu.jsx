@@ -6,7 +6,7 @@ const Menu = () => {
     return (
         <div className="slidebar">
             <ul>
-                <Link to="">
+                <Link to="/perfil">
                     <img src="img/perfil.svg" alt="Perfil"/>
                     <span>perfil</span>
                 </Link>

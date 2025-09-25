@@ -1,3 +1,19 @@
+/* Botón para ver y editar mis noticias */
+.mis-noticias-btn {
+	display: inline-block;
+	padding: 12px 24px;
+	margin: 16px 0;
+	background: #f1c40f;
+	color: #000000ff;
+	border: none;
+	border-radius: 8px;
+	font-weight: bold;
+	font-size: 1rem;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	cursor: pointer;
+	text-decoration: none;
+	transition: background 0.3s;
+}
 body, .creaciones-root {
 	background: #232627;
 	min-height: 100vh;
@@ -151,9 +167,6 @@ body, .creaciones-root {
 	background: #f1c40f;
 	color: #222;
 	white-space: nowrap;
-}
-
-	white-space: nowrap; /* This line will be added */
 	margin-top: 32px;
 	display: flex;
 	gap: 16px;

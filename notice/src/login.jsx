@@ -37,6 +37,11 @@ const Login = () => {
 
   return (
     <div className="container">
+            <div className="sign-out">
+        <a href="/">
+          <img src="img/exit.svg" alt="Exit" />
+        </a>
+      </div>
       <div className="header-icon">
         <a href="/">
           <FaDoorClosed />
