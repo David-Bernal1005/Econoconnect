@@ -9,12 +9,19 @@ export default function ChatRoom() {
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    loadMessages();
+    if (chatId) {
+      loadMessages();
+    }
   }, [chatId]);
 
   const loadMessages = async () => {
-    const data = await getMessages(chatId);
-    setMessages(data);
+    try {
+      const data = await getMessages(chatId);
+      setMessages(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error loading messages:', error);
+      setMessages([]);
+    }
   };
 
   const handleSend = async () => {
