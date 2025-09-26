@@ -40,9 +40,9 @@ const Perfil = () => {
           </a>
         </ul>
         <ul>
-          <a href="/graficos">
-            <img src="/img/graficos.svg" alt="Graficos" />
-            <span>Graficos</span>
+          <a href="/graficas">
+            <img src="/img/graficos.svg" alt="Graficas" />
+            <span>Graficas</span>
           </a>
         </ul>
         <ul>

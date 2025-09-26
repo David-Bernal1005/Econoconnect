@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1.endpoints import auth, noticias, publicaciones
+from app.api.v1.endpoints import auth, noticias, publicaciones, graficas
 
 app = FastAPI(title="Econoconnect")
 
@@ -30,3 +30,4 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/v1/auth")
 app.include_router(noticias.router, prefix="/api/v1")
 app.include_router(publicaciones.router, prefix="/api/v1")
+app.include_router(graficas.router, prefix="/api/v1", tags=["graficas"])

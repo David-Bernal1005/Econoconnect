@@ -1,0 +1,72 @@
+.graficas-header {
+    display: flex;
+    justify-content: center;    
+    margin: 20px 0;
+}
+
+.graficas-header h2 {
+    background-color: #f1c40f; 
+    color: #1c2120;             
+    font-size: 28px;
+    font-weight: bold;
+    padding: 10px 480px;
+    border-radius: 25px;        
+    text-align: center;
+}
+
+.graficas-container {
+    padding: 20px;
+    background: #fff6ea;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+.graficas-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1c2120;
+}
+
+.chart-wrapper {
+    width: 100%;
+    height: 400px;
+}
+
+.graficas-page {
+    display: flex;
+}
+
+.graficas-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 220px; 
+}
+
+.graficas-header {
+    margin-bottom: 20px;
+}
+
+.monedas {
+    display: flex;
+    justify-content: center; 
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.moneda-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1c2120;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.moneda-card img {
+    width: 400px;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 6px;
+}
