@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text
-from backend.app.db.session import Base
+from . import Base
 
 class TipoContenido(Base):
     __tablename__ = "tipos_contenido"

@@ -13,7 +13,8 @@ import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
-import Perfil from "./Perfil"
+import Perfil from "./Perfil";
+import Chat from "./Chat";
 
 
 import "./app.css";
@@ -90,6 +91,7 @@ const App = () => {
       <Route path="/creaciones" element={<Creaciones />} />
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/misnoticias" element={<MisNoticias />} />
+      <Route path="/chat/:chatId" element={<Chat />} />
       <Route path="/" element={<App/>}/>
       </Routes>
     </Router>

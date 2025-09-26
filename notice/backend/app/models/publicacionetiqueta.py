@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey
-from backend.app.db.session import Base
+from . import Base
 
 class PublicacionEtiqueta(Base):
     __tablename__ = "publicacion_etiqueta"

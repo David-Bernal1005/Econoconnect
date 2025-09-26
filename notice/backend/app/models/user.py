@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, UniqueConstraint
 from sqlalchemy.sql import func
-from app.db.session import Base
+from . import Base
 from enum import Enum as PyEnum
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.orm import relationship
@@ -16,8 +16,7 @@ class User(Base):
     __tablename__ = "users"
     __table_args__ = (
         UniqueConstraint("username", name="uq_users_username"),
-        UniqueConstraint("email", name="uq_users_email"),
-        {'extend_existing': True}
+        UniqueConstraint("email", name="uq_users_email")
     )
 
     id_user = Column(Integer, primary_key=True, autoincrement=True, nullable=False, index=True)
@@ -37,5 +36,5 @@ class User(Base):
 
     # La relación se define después de importar Foro
 # Importar Foro y definir la relación al final del archivo para evitar errores de inicialización circular
-from app.models.foro import Foro
+from .foro import Foro
 User.foros = relationship("Foro", back_populates="autor")

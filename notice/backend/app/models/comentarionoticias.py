@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Text, ForeignKey, TIMESTAMP
 from sqlalchemy.sql import func
-from backend.app.db.session import Base
+from . import Base
 
 class ComentarioNoticia(Base):
     __tablename__ = "comentarios_noticias"

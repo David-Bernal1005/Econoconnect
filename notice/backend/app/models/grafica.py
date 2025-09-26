@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Enum, ForeignKey, TIMESTAMP
 from sqlalchemy.sql import func
-from backend.app.db.session import Base
+from . import Base
 
 class Grafica(Base):
     __tablename__ = "grafica"

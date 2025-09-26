@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey
-from backend.app.db.session import Base
+from . import Base
 
 class ChatMensajeAdjunto(Base):
     __tablename__ = "chat_mensaje_adjunto"
