@@ -1,7 +1,7 @@
 """
-Revision ID: 8e46b434b89b
-Revises: e9286bf87736
-Create Date: 2025-09-22 15:56:35.543327
+Revision ID: 30e6a759e855
+Revises: 3672717f84d1
+Create Date: 2025-09-26 16:53:19.087713
 
 """
 from alembic import op
@@ -9,8 +9,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8e46b434b89b'
-down_revision = 'e9286bf87736'
+revision = '30e6a759e855'
+down_revision = '3672717f84d1'
 branch_labels = None
 depends_on = None
 
@@ -40,6 +40,27 @@ def upgrade():
     sa.Column('Descripcion', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('Id_Tipo')
     )
+    op.create_table('users',
+    sa.Column('id_user', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(length=50), nullable=False),
+    sa.Column('lastname', sa.String(length=50), nullable=False),
+    sa.Column('cellphone', sa.String(length=20), nullable=False),
+    sa.Column('direction', sa.String(length=120), nullable=False),
+    sa.Column('username', sa.String(length=50), nullable=False),
+    sa.Column('email', sa.String(length=120), nullable=True),
+    sa.Column('hashed_password', sa.String(length=255), nullable=False),
+    sa.Column('country', sa.String(length=50), nullable=False),
+    sa.Column('rol', sa.Enum('administrador', 'usuario', name='roleenum'), nullable=False),
+    sa.Column('state', sa.Enum('activo', 'inactivo', name='stateuser'), nullable=False),
+    sa.Column('creation_date', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('last_activity_date', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('number_followers', sa.Integer(), nullable=True),
+    sa.PrimaryKeyConstraint('id_user'),
+    sa.UniqueConstraint('email', name='uq_users_email'),
+    sa.UniqueConstraint('username', name='uq_users_username')
+    )
+    op.create_index(op.f('ix_users_id_user'), 'users', ['id_user'], unique=False)
+    op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=False)
     op.create_table('adjunto',
     sa.Column('id_adjunto', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('tipo', sa.String(length=50), nullable=True),
@@ -49,6 +70,15 @@ def upgrade():
     sa.Column('fecha_creacion', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
     sa.ForeignKeyConstraint(['autor_id'], ['users.id_user'], ),
     sa.PrimaryKeyConstraint('id_adjunto')
+    )
+    op.create_table('auditoria_usuario_estado',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('id_usuario', sa.Integer(), nullable=False),
+    sa.Column('estado_anterior', sa.Enum('activo', 'inactivo', name='estado_anterior'), nullable=True),
+    sa.Column('estado_nuevo', sa.Enum('activo', 'inactivo', name='estado_nuevo'), nullable=True),
+    sa.Column('fecha', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
+    sa.ForeignKeyConstraint(['id_usuario'], ['users.id_user'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('chat',
     sa.Column('id_chat', sa.Integer(), autoincrement=True, nullable=False),
@@ -91,6 +121,20 @@ def upgrade():
     sa.Column('fecha_creacion', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
     sa.ForeignKeyConstraint(['autor_id'], ['users.id_user'], ),
     sa.PrimaryKeyConstraint('id_grafica')
+    )
+    op.create_table('noticias',
+    sa.Column('Id_Noticia', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('titulo', sa.String(length=200), nullable=True),
+    sa.Column('resumen', sa.Text(), nullable=True),
+    sa.Column('enlace', sa.String(length=500), nullable=True),
+    sa.Column('fecha_publicacion', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
+    sa.Column('Id_Categoria', sa.Integer(), nullable=True),
+    sa.Column('Id_Fuente', sa.Integer(), nullable=True),
+    sa.Column('usuario', sa.String(length=100), nullable=True),
+    sa.Column('activa', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['Id_Categoria'], ['categorias.Id_Categoria'], ),
+    sa.ForeignKeyConstraint(['Id_Fuente'], ['fuentes.Id_Fuente'], ),
+    sa.PrimaryKeyConstraint('Id_Noticia')
     )
     op.create_table('usuario_rol',
     sa.Column('id_user', sa.Integer(), nullable=False),
@@ -167,6 +211,16 @@ def upgrade():
     sa.ForeignKeyConstraint(['id_user'], ['users.id_user'], ),
     sa.PrimaryKeyConstraint('id_publicacion')
     )
+    op.create_table('reacciones',
+    sa.Column('id_reaccion', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('id_user', sa.Integer(), nullable=False),
+    sa.Column('Id_Noticia', sa.Integer(), nullable=False),
+    sa.Column('tipo_reaccion', sa.String(length=20), nullable=True),
+    sa.Column('fecha_reaccion', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
+    sa.ForeignKeyConstraint(['Id_Noticia'], ['noticias.Id_Noticia'], ),
+    sa.ForeignKeyConstraint(['id_user'], ['users.id_user'], ),
+    sa.PrimaryKeyConstraint('id_reaccion')
+    )
     op.create_table('chat_mensaje_adjunto',
     sa.Column('id_mensaje', sa.Integer(), nullable=False),
     sa.Column('id_adjunto', sa.Integer(), nullable=False),
@@ -214,20 +268,17 @@ def upgrade():
     sa.ForeignKeyConstraint(['id_comentario'], ['comentario.id_comentario'], ),
     sa.PrimaryKeyConstraint('id_comentario', 'id_adjunto')
     )
-    op.create_foreign_key(None, 'noticias', 'categorias', ['Id_Categoria'], ['Id_Categoria'])
-    op.create_foreign_key(None, 'noticias', 'fuentes', ['Id_Fuente'], ['Id_Fuente'])
     # ### end Alembic commands ###
 
 def downgrade():
 	# ### commands auto generated by Alembic - please adjust! ###
-    op.drop_constraint(None, 'noticias', type_='foreignkey')
-    op.drop_constraint(None, 'noticias', type_='foreignkey')
     op.drop_table('comentario_adjunto')
     op.drop_table('publicacion_etiqueta')
     op.drop_table('publicacion_adjunto')
     op.drop_table('comentarios_publicaciones')
     op.drop_table('comentario')
     op.drop_table('chat_mensaje_adjunto')
+    op.drop_table('reacciones')
     op.drop_table('publicacion')
     op.drop_table('dato_grafica')
     op.drop_table('comentarios_noticias')
@@ -236,11 +287,16 @@ def downgrade():
     op.drop_table('usuario_seguidor')
     op.drop_table('usuario_seguido')
     op.drop_table('usuario_rol')
+    op.drop_table('noticias')
     op.drop_table('grafica')
     op.drop_table('foro')
     op.drop_table('etiqueta')
     op.drop_table('chat')
+    op.drop_table('auditoria_usuario_estado')
     op.drop_table('adjunto')
+    op.drop_index(op.f('ix_users_username'), table_name='users')
+    op.drop_index(op.f('ix_users_id_user'), table_name='users')
+    op.drop_table('users')
     op.drop_table('tipos_contenido')
     op.drop_table('rol')
     op.drop_table('fuentes')

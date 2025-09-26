@@ -1,4 +1,4 @@
-# tests/test_noticias_simple.py
+# tests/test_noticias.py
 import pytest
 from fastapi.testclient import TestClient
 import sys

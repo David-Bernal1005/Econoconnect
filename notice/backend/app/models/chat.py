@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Enum, ForeignKey, TIMESTAMP, DECIMAL, Date, BigInteger, DATETIME
 from sqlalchemy.sql import func
-from backend.app.db.session import Base
+from . import Base
 import enum
 
 class Chat(Base):

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date, DECIMAL, ForeignKey
-from backend.app.db.session import Base
+from . import Base
 
 class DatoGrafica(Base):
     __tablename__ = "dato_grafica"

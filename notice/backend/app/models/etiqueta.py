@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, TIMESTAMP, ForeignKey
 from sqlalchemy.sql import func
-from backend.app.db.session import Base
+from . import Base
 
 class Etiqueta(Base):
     __tablename__ = "etiqueta"

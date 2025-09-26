@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from app.db.session import Base
+from . import Base
 
 class Fuente(Base):
     __tablename__ = "fuentes"

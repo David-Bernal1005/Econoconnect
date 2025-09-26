@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey
-from backend.app.db.session import Base
+from . import Base
 
 class ComentarioAdjunto(Base):
     __tablename__ = "comentario_adjunto"

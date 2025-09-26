@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, Enum
 from sqlalchemy.sql import func
-from backend.app.db.session import Base
+from . import Base
 import enum
 
 class AuditoriaUsuarioEstado(Base):

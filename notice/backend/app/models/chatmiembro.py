@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, TIMESTAMP, Enum
 from sqlalchemy.sql import func
-from backend.app.db.session import Base
+from . import Base
 
 class ChatMiembro(Base):
     __tablename__ = "chat_miembro"

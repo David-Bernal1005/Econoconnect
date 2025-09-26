@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship
-from app.db.session import Base
+from . import Base
 import enum
 
 class EstadoForo(enum.Enum):
@@ -9,7 +9,6 @@ class EstadoForo(enum.Enum):
 
 class Foro(Base):
     __tablename__ = "foro"
-    __table_args__ = {'extend_existing': True}
 
     id_foro = Column(Integer, primary_key=True, autoincrement=True)
     nombre = Column(String(100), nullable=False)
