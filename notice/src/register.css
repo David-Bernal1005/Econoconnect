@@ -53,6 +53,19 @@
   text-align: left;
 }
 
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffcc00;
+}
+
 /* Input con iconos */
 .input-group {
   display: flex;

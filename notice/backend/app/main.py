@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1.endpoints import auth, noticias, publicaciones, graficas
+from app.api.v1.endpoints import auth, noticias, publicaciones, graficas, user, user_update
 
 app = FastAPI(title="Econoconnect")
 
@@ -31,3 +31,5 @@ app.include_router(auth.router, prefix="/api/v1/auth")
 app.include_router(noticias.router, prefix="/api/v1")
 app.include_router(publicaciones.router, prefix="/api/v1")
 app.include_router(graficas.router, prefix="/api/v1", tags=["graficas"])
+app.include_router(user.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(user_update.router, prefix="/api/v1/users", tags=["users"])

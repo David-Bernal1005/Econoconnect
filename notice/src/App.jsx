@@ -13,7 +13,9 @@ import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
+
 import Perfil from "./Perfil";
+import EditUser from "./EditUser";
 
 import Graficas from "./Graficas"; 
 
@@ -107,7 +109,8 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/creaciones" element={<Creaciones />} />
-        <Route path="/perfil" element={<Perfil />} />
+  <Route path="/perfil" element={<Perfil />} />
+  <Route path="/edit-user" element={<EditUser />} />
         <Route path="/misnoticias" element={<MisNoticias />} />
         <Route path="/graficas" element={<Graficas />} /> 
 =======

@@ -24,7 +24,7 @@ const Menu = () => {
                 </Link>
             </ul>
             <ul>
-                <Link to="">
+                <Link to="/graficas">
                     <img src="img/graficos.svg" alt="Graficas"/>
                     <span>Graficas</span>
                 </Link>
