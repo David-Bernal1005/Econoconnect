@@ -1,7 +1,18 @@
+.graficas-page {
+    display: flex;
+}
+
+.graficas-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 110px; 
+    margin-bottom: 150px; 
+}
+
 .graficas-header {
     display: flex;
     justify-content: center;    
-    margin: 20px 0;
+    margin: 10px 0; 
 }
 
 .graficas-header h2 {
@@ -12,39 +23,6 @@
     padding: 10px 480px;
     border-radius: 25px;        
     text-align: center;
-}
-
-.graficas-container {
-    padding: 20px;
-    background: #fff6ea;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    margin: 20px;
-}
-
-.graficas-title {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #1c2120;
-}
-
-.chart-wrapper {
-    width: 100%;
-    height: 400px;
-}
-
-.graficas-page {
-    display: flex;
-}
-
-.graficas-content {
-    flex: 1;
-    padding: 20px;
-    margin-left: 220px; 
-}
-
-.graficas-header {
-    margin-bottom: 20px;
 }
 
 .monedas {
@@ -68,5 +46,102 @@
     width: 400px;
     height: 200px;
     object-fit: contain;
-    margin-bottom: 6px;
+    margin-bottom: 15px;
+}
+
+.graficas-main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;   
+}
+
+.chart-container {
+    flex: 3;
+    background: transparent;
+}
+
+.foro-container {
+    flex: 1;
+    background: #2b2b2b;
+    border-radius: 12px;
+    padding: 30px;
+    color: #fff6ea;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.foro-container h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #f1c40f;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+.comentarios-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comentario {
+    background: #f1c40f;
+    color: #1c2120;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.comentario::before {
+    content: "👤";
+    font-size: 16px;
+}
+
+
+.comentario-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comentario-form textarea {
+    width: 100%;
+    resize: none;
+    padding: px;
+    border-radius: 7px;
+    border: 1px solid #5e5e5e;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: #5e5e5e; 
+}
+.comentario-form textarea::placeholder {
+    color: #c5c5c5; 
+}
+
+.comentario-form button {
+    width: 100%;
+    background-color: #f1c40f;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    color: #1c2120;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.comentario-form button:hover {
+    background-color: #d4ac0d;
 }

@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Enum, ForeignKey, TIMESTAMP
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from . import Base
 
 class Grafica(Base):
@@ -12,3 +13,5 @@ class Grafica(Base):
     autor_id = Column(Integer, ForeignKey("users.id_user"))
     estado = Column(Enum("activa", "inactiva", name="estado_grafica"), default="activa")
     fecha_creacion = Column(TIMESTAMP, server_default=func.now())
+    foro = relationship("Foro", back_populates="grafica", uselist=False)
+

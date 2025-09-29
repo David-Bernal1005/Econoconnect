@@ -13,14 +13,11 @@ import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
-
 import Perfil from "./Perfil";
 import Graficas from "./Graficas"; 
 import Inbox from "./Inbox";
 import ChatRoomWS from "./ChatRoomWS";
 import EditUser from "./EditUser";
-import Graficas from "./Graficas"; 
-import Chat from "./Chat";
 
 
 
