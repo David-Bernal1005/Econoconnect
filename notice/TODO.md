@@ -1,6 +1,0 @@
-- [x] Update backend login endpoint to return id_user
-- [x] Update frontend login to store user_id in localStorage
-- [x] Update App.jsx to use userId from localStorage
-- [x] Update logout to remove user_id from localStorage
-- [ ] Test login to ensure user_id is stored
-- [ ] Verify chat components use correct user ID
