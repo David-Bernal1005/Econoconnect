@@ -1,24 +1,28 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from typing import List
 from app.db.session import get_db
-from app.schemas.chat import ChatCreate, ChatResponse
-from app.services.chat_service import crear_chat, listar_chats_usuario, obtener_chat, cambiar_estado_chat
+from app.models.chat import Chat
+from app.models.chatmensaje import ChatMensaje
 
 router = APIRouter()
 
-@router.post("/", response_model=ChatResponse)
-def crear(chat: ChatCreate, db: Session = Depends(get_db)):
-    return crear_chat(db, chat)
-
-@router.get("/usuario/{id_user}", response_model=List[ChatResponse])
-def listar_chats(id_user: int, db: Session = Depends(get_db)):
-    return listar_chats_usuario(db, id_user)
-
-@router.get("/{id_chat}", response_model=ChatResponse)
-def obtener(id_chat: int, db: Session = Depends(get_db)):
-    return obtener_chat(db, id_chat)
-
-@router.put("/{id_chat}/estado", response_model=ChatResponse)
-def cambiar_estado(id_chat: int, nuevo_estado: str, db: Session = Depends(get_db)):
-    return cambiar_estado_chat(db, id_chat, nuevo_estado)
+@router.get("/chats/{user_id}")
+def get_user_chats(user_id: int, db: Session = Depends(get_db)):
+    
+    chats = db.query(Chat).filter(Chat.creador_id == user_id).all()
+    
+    result = []
+    for chat in chats:
+        last_msg = {
+            db.query(ChatMensaje)
+            .filter(ChatMensaje.id_chat == chat.id_chat)
+            .order_by(ChatMensaje.fecha_envio.desc())
+            .first()
+        }
+        result.append({
+            "id_chat": chat.id_chat,
+            "nombre": chat.nombre,
+            "ultimo_mensaje": last_msg.contenido if last_msg else "",
+            "fecha_ultimo": str(last_msg.fecha_envio) if last_msg else None,
+        })
+    return result 

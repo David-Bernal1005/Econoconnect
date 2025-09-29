@@ -132,5 +132,6 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     return {
         "access_token": token,
         "token_type": "bearer",
-        "name": user.name
+        "name": user.name,
+        "id_user": user.id_user
     }
