@@ -1,171 +1,128 @@
-
-/* Styles for the registration page */
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #1c2120;
-  color: #fff;
-}
-
-.register-container {
+/* Fondo con identidad corporativa */
+.register-page {
+  position: relative;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding-top: 60px;
+  justify-content: center;
+  background: url("https://www.elviejotopo.com/wp-content/uploads/2019/05/economia.jpg") no-repeat center center/cover;
 }
 
-
-.header {
-  background-color: #ffcc00;
-  color: #1c2120;
-  padding: 12px 400px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 22px;
-  margin-bottom: 50px;
-  width: 100px;
-}
-
-.header-icon {
-  display: flex;           /* <-- Alinea en fila horizontal */
-  gap: 4px;               /* Espacio entre íconos */
+.register-page::before {
+  content: "";
   position: absolute;
-  top: 90px;
-  right: 50px;
-  background-color: #ffcc00;
-  padding: 13px 30px;
-  border-radius: 30px;
-  font-weight: bold;
-  font-size: 22px;
-  margin-bottom: 50px;
-  color: #fff;
-  cursor: pointer;
-}
-.header-icon a:hover { 
-  color: #4F5F2C;
+  inset: 0;
+  background: rgba(28, 33, 32, 0.7);
+  z-index: -1;
 }
 
-.header-icon a {
-  color: white;
-  text-decoration: none;
-  transition: color 0.3s, transform 0.3s;
-}
-
-.header-icon a:hover {
-  color: #333; 
-  transform: scale(1.2); 
-}
-
-
-.register-box {
-  background-color: #4c5058;
-  padding: 40px;
-  border-radius: 20px;
+/* Caja principal */
+.register-container {
+  background: rgba(28, 33, 32, 0.92);
+  padding: 35px 40px;
+  border-radius: 15px;
+  max-width: 420px;
   width: 100%;
-  max-width: 480px;
-  box-shadow: 0px 0px 22px rgba(0,0,0,0.28);
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  margin: 0 auto;
-}
-
-/* Título */
-.register-title {
-  background-color: #ffcc00;
-  color: #000;
+  color: #fff6ea;
   text-align: center;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 20px;           /* más grande que antes (16px → 20px) */
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
-/* Input group */
+/* Logo */
+.register-logo img {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+/* Títulos */
+.register-title {
+  font-size: 26px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.register-subtitle {
+  font-size: 14px;
+  margin-bottom: 25px;
+  color: #dcdcdc;
+}
+
+/* Formulario */
+.register-form {
+  text-align: left;
+}
+
+/* Input con iconos */
 .input-group {
   display: flex;
   align-items: center;
-  background-color: #121826;
-  padding: 0 18px;
-  border-radius: 22px;
+  gap: 12px;
+  background: #121826;
+  border-radius: 25px;
+  padding: 12px 16px;
   margin-bottom: 18px;
-  min-height: 48px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.input-group i {
-  margin-right: 10px;
   color: #ffcc00;
-  font-size: 18px;           /* icono más grande */
 }
 
 .input-group input {
-  background: none;
-  border: none;
-  outline: none;
-  color: #fff;
   flex: 1;
-  font-size: 16px;
-  padding: 12px 0 12px 16px;
-}
-
-.input-group select {
-  background-color: #121826;
   border: none;
+  background: transparent;
   outline: none;
-  color: #fff;
-  flex: 1;
-  font-size: 16px;
-  padding: 12px 0 12px 8px;
-  border-radius: 22px;
-  box-sizing: border-box;
-  appearance: auto;
-  cursor: pointer;
-}
-/* Forgot password */
-.forgot {
-  text-align: left;
-  font-size: 14px;           /* subido de 12px a 14px */
-  color: #ffcc00;
-  margin-top: -12px;
+  color: #fff6ea;
+  font-size: 15px;
 }
 
-.forgot:hover {
-  color: #fff;
+.input-group input::placeholder {
+  color: #bdbdbd;
 }
 
-
-
-button {
+/* Botón */
+.register-button {
   width: 100%;
-  background-color: #ffcc00;
-  color: #000;
-  padding: 14px;
-  font-size: 16px;
+  padding: 12px;
+  background: #ffcc00;
   border: none;
-  border-radius: 22px;
+  border-radius: 25px;
+  color: #1c2120;
   font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 18px;
+  transition: 0.3s;
 }
 
-button:hover {
-  background-color: #e6b800;
+.register-button:hover {
+  background: #e6b800;
 }
 
-.back-link {
-  display: block;
+/* Mensajes */
+.register-message {
+  margin-top: 15px;
+  font-weight: bold;
   text-align: center;
+}
+
+/* Link al login */
+.login-text {
   margin-top: 20px;
-  color: #ffdd00;
+  font-size: 14px;
+  color: #fff6ea;
+}
+
+.login-link {
+  color: #ffcc00;
+  font-weight: bold;
   text-decoration: none;
 }
 
-.back-link:hover {
+.login-link:hover {
   text-decoration: underline;
-  color: #fff;
-
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 25px 20px;
+  }
+}

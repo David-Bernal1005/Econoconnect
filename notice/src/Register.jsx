@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaUser, FaUserTag, FaPhone, FaHome, FaEnvelope, FaGlobe, FaUserCircle, FaLock, FaUserShield, FaDoorClosed } from "react-icons/fa";
+import { FaUser, FaUserTag, FaEnvelope, FaUserCircle, FaLock } from "react-icons/fa";
 import "./register.css";
 
 const Register = () => {
@@ -14,7 +14,6 @@ const Register = () => {
     usua_password: "",
     usua_rol_fk: "usuario",
   });
-
   const [mensaje, setMensaje] = useState("");
   const [mensajeColor, setMensajeColor] = useState("#d32f2f");
 
@@ -27,7 +26,7 @@ const Register = () => {
     setMensaje("");
     setMensajeColor("#d32f2f");
     try {
-  const response = await fetch("http://localhost:8000/api/v1/auth/register", {
+      const response = await fetch("http://localhost:8000/api/v1/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,139 +56,83 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="sign-out">
-        <a href="/">
-          <img src="img/exit.svg" alt="Exit" />
-        </a>
+    <div className="register-page">
+      <div className="register-wrapper">
+        <div className="register-container">
+          <div className="register-logo">
+            <img src="/img/logo-ec.png" alt="Econoconnect" />
+          </div>
+          <h1 className="register-title">Registrate</h1>
+          <p className="register-subtitle">Únete a nuestra comunidad y conecta con nuevas oportunidades.</p>
+
+          <form className="register-form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <FaUser />
+              <input
+                type="text"
+                name="usua_nombre"
+                value={formData.usua_nombre}
+                placeholder="Nombre..."
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="input-group">
+              <FaUserTag />
+              <input
+                type="text"
+                name="usua_apellido"
+                value={formData.usua_apellido}
+                placeholder="Apellido..."
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="input-group">
+              <FaEnvelope />
+              <input
+                type="email"
+                name="usua_email"
+                value={formData.usua_email}
+                placeholder="Email..."
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="input-group">
+              <FaUserCircle />
+              <input
+                type="text"
+                name="usua_usuario"
+                value={formData.usua_usuario}
+                placeholder="Usuario..."
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="input-group">
+              <FaLock />
+              <input
+                type="password"
+                name="usua_password"
+                value={formData.usua_password}
+                placeholder="Contraseña..."
+                onChange={handleChange}
+              />
+            </div>
+
+            <button type="submit" className="register-button">Registrarse</button>
+          </form>
+
+          {mensaje && (
+            <p className="register-message" style={{ color: mensajeColor }}>{mensaje}</p>
+          )}
+
+          <p className="login-text">
+            ¿Ya tienes cuenta? <a href="/login" className="login-link">Inicia sesión</a>
+          </p>
+        </div>
       </div>
-      <div className="header">Regístrate</div>
-      <div className="register-box">
-        <div className="register-title">Bienvenido</div>
-        <form onSubmit={handleSubmit}>
-
-        <div className="input-group">
-          <FaUser />
-          <input
-            type="text"
-            id="usua_nombre"
-            name="usua_nombre"
-            value={formData.usua_nombre}
-            placeholder=" Nombre..."            
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaUserTag />
-          <input
-            type="text"
-            id="usua_apellido"
-            name="usua_apellido"
-            value={formData.usua_apellido}
-            placeholder=" Apellido..."
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaPhone />
-          <input
-            type="text"
-            id="usua_celular"
-            name="usua_celular"
-            value={formData.usua_celular}
-            placeholder=" Celular..."
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaHome />
-          <input
-            type="text"
-            id="usua_direccion"
-            name="usua_direccion"
-            value={formData.usua_direccion}
-            placeholder=" Dirección..."
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaEnvelope />
-          <input
-            type="email"
-            id="usua_email"
-            name="usua_email"
-            value={formData.usua_email}
-            placeholder=" Email..."
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaGlobe />
-          <input
-            type="text"
-            id="usua_pais"
-            name="usua_pais"
-            value={formData.usua_pais}
-            placeholder=" País..."
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaUserCircle />
-          <input
-            type="text"
-            id="usua_usuario"
-            name="usua_usuario"
-            value={formData.usua_usuario}
-            placeholder=" Usuario..."
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaLock />
-          <input
-            type="password"
-            id="usua_password"
-            name="usua_password"
-            value={formData.usua_password}
-            placeholder=" Contraseña..."
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="input-group">
-          <FaUserShield />
-          <select
-            id="usua_rol_fk"
-            name="usua_rol_fk"
-            value={formData.usua_rol_fk}
-            onChange={handleChange}
-          >
-            <option disabled>Administrador</option>
-            <option value="usuario">Usuario</option>
-          </select>
-        </div>
-
-        <button type="submit">Registrarse</button>
-      </form>
-
-      {mensaje && (
-        <div id="mensaje" style={{ marginTop: "10px", color: mensajeColor, fontWeight: "bold" }}>
-          {mensaje}
-        </div>
-      )}
-      <a href="/login" className="back-link">Login</a>
-      </div>
-
-
-
     </div>
   );
 };

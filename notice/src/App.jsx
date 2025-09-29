@@ -14,12 +14,12 @@ import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
 import Perfil from "./Perfil";
-<<<<<<< HEAD
+
 import Graficas from "./Graficas"; 
-=======
+
 import Chat from "./Chat";
 
->>>>>>> 8eeee24ad39e16a7f7223fb657c1751272c744eb
+
 
 import "./app.css";
 
@@ -102,7 +102,7 @@ const App = () => {
           }
         />
 
-<<<<<<< HEAD
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -121,7 +121,7 @@ const App = () => {
       <Route path="/misnoticias" element={<MisNoticias />} />
       <Route path="/chat/:chatId" element={<Chat />} />
       <Route path="/" element={<App/>}/>
->>>>>>> 8eeee24ad39e16a7f7223fb657c1751272c744eb
+
       </Routes>
     </Router>
   );
