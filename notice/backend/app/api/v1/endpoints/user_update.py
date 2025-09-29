@@ -34,13 +34,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
-class UserUpdateRequest(BaseModel):
-    name: str
-    lastname: str
-    email: str
-    cellphone: str
-    direction: str
-    country: str
+
+from app.schemas.user import UserUpdateRequest
 
 @router.put("/me", response_model=UserResponse)
 async def update_user_me(
@@ -54,6 +49,8 @@ async def update_user_me(
     current_user.cellphone = payload.cellphone
     current_user.direction = payload.direction
     current_user.country = payload.country
+    if payload.profile_image is not None:
+        current_user.profile_image = payload.profile_image
     db.commit()
     db.refresh(current_user)
     return current_user

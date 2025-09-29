@@ -12,8 +12,27 @@ const EditUser = () => {
     email: "",
     cellphone: "",
     direction: "",
-    country: ""
+    country: "",
+    profile_image: ""
   });
+  const [preview, setPreview] = useState("");
+  // Mostrar preview si ya hay imagen
+  useEffect(() => {
+    if (formData.profile_image) {
+      setPreview(formData.profile_image);
+    }
+  }, [formData.profile_image]);
+  // Manejar selección de archivo y convertir a base64
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({ ...prev, profile_image: reader.result }));
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -91,6 +110,15 @@ const EditUser = () => {
     <div className="edit-user">
       <h2>Editar usuario</h2>
       <form>
+        <div className="info-row">
+          <label className="label">Foto de perfil</label>
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+        </div>
+        {preview && (
+          <div className="info-row">
+            <img src={preview} alt="Preview" style={{ width: 100, height: 100, borderRadius: "50%" }} />
+          </div>
+        )}
         <div className="info-row">
           <label className="label">Nombre</label>
           <input

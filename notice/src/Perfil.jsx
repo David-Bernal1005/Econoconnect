@@ -93,7 +93,11 @@ const Perfil = () => {
           <div className="profile-header">
             <img src="/img/monedas.png" alt="Monedas" className="header-img" />
             <div className="profile-pic">
-              <img src="/img/profile.png" alt="User" />
+              {user.profile_image ? (
+                <img src={user.profile_image} alt="User" />
+              ) : (
+                <img src="/img/profile.png" alt="User" />
+              )}
             </div>
           </div>
           <h2>{user.username}</h2>
