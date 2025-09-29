@@ -1,21 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./perfil.css";
 
 const Perfil = () => {
-  const navigate = useNavigate();
 
-  const user = {
-    fullName: "Juan David Rojas Burbano",
-    email: "juan.david.rojas0@gmail.com",
-    phone: "3202960539",
-    address: "Cra 31 # 29-58 Cundinamarca, Bogota",
-    country: "Colombia",
-  };
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No autenticado");
+      setLoading(false);
+      return;
+    }
+    fetch("http://localhost:8000/api/v1/users/me", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo obtener el usuario");
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [navigate]);
+
 
   const handleEdit = () => {
-    navigate("/edit", { state: { user } });
+    navigate("/edit-user", { state: { user } });
   };
+
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p style={{color: 'red'}}>{error}</p>;
+  if (!user) return <p>No se encontraron datos de usuario.</p>;
 
   return (
     <div>
@@ -69,20 +96,20 @@ const Perfil = () => {
               <img src="/img/profile.png" alt="User" />
             </div>
           </div>
-          <h2>Rulitos08</h2>
+          <h2>{user.username}</h2>
 
           {/* Redes */}
           <div className="social-info">
             <div className="social-row">
               <img src="/img/twitter.png" alt="Twitter" />
               <span>Twitter</span>
-              <span className="twitter-handle">@Rulitos088</span>
+              <span className="twitter-handle">@{user.username}</span>
             </div>
             <hr className="linea-negra" />
             <div className="social-row">
               <img src="/img/telephone.png" alt="Phone" />
               <span>Cellphone</span>
-              <span className="twitter-handle">+57 3202960539</span>
+              <span className="twitter-handle">{user.cellphone}</span>
             </div>
             <hr className="linea-negra" />
           </div>
@@ -92,7 +119,7 @@ const Perfil = () => {
         <div className="profile-details">
           <div className="info-row">
             <span className="label">Full Name</span>
-            <span className="value">{user.fullName}</span>
+            <span className="value">{user.name} {user.lastname}</span>
           </div>
           <div className="info-row">
             <span className="label">Email</span>
@@ -100,11 +127,11 @@ const Perfil = () => {
           </div>
           <div className="info-row">
             <span className="label">Phone</span>
-            <span className="value">{user.phone}</span>
+            <span className="value">{user.cellphone}</span>
           </div>
           <div className="info-row">
             <span className="label">Address</span>
-            <span className="value">{user.address}</span>
+            <span className="value">{user.direction}</span>
           </div>
           <div className="info-row">
             <span className="label">Country</span>

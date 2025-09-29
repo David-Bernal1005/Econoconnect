@@ -13,10 +13,16 @@ import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
+
 import Perfil from "./Perfil";
 import Graficas from "./Graficas"; 
 import Inbox from "./Inbox";
 import ChatRoomWS from "./ChatRoomWS";
+import EditUser from "./EditUser";
+import Graficas from "./Graficas"; 
+import Chat from "./Chat";
+
+
 
 import "./app.css";
 
@@ -82,12 +88,13 @@ const App = () => {
           }
         />
 
-        {/* Otras rutas */}
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/creaciones" element={<Creaciones />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/edit-user" element={<EditUser />} />
         <Route path="/misnoticias" element={<MisNoticias />} />
         <Route path="/graficas" element={<Graficas />} /> 
 
@@ -105,8 +112,18 @@ const App = () => {
             )
           }
         />
+
+
+      {/*<Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/creaciones" element={<Creaciones />} />
+      <Route path="/perfil" element={<Perfil />} />
+      <Route path="/misnoticias" element={<MisNoticias />} />
+      <Route path="/chat/:chatId" element={<Chat />} />
+      <Route path="/" element={<App/>}/>*/}
       </Routes>
-    </Router>
+     </Router>
   );
 };
 

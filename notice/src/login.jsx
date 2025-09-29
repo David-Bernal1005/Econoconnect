@@ -1,8 +1,6 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBolt, FaDoorClosed, FaUserCircle, FaLock } from "react-icons/fa";
-import "./login.css"; // ajusta la ruta si tu login.css está en otra carpeta
+import "./login.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -15,92 +13,104 @@ const Login = () => {
     try {
       const res = await fetch("http://localhost:8000/api/v1/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      if (!res.ok) {
-        throw new Error("Usuario o contraseña incorrectos");
-      }
+      if (!res.ok) throw new Error("Usuario o contraseña incorrectos");
 
       const data = await res.json();
+
   localStorage.setItem("token", data.access_token);
   localStorage.setItem("nombre_usuario", data.name);
   localStorage.setItem("user_id", data.id_user);
   setMessage("Inicio de sesión exitoso");
   window.location.href = "/";
+
     } catch (err) {
       setMessage(err.message);
     }
   };
 
   return (
-    <div className="container">
-            <div className="sign-out">
-        <a href="/">
-          <img src="img/exit.svg" alt="Exit" />
-        </a>
-      </div>
-      <div className="header-icon">
-        <a href="/">
-          <FaDoorClosed />
-        </a>
-      </div>
+    <div className="login-page">
+      <div className="login-wrapper">
 
-      <div className="header">Login</div>
-
-      <form onSubmit={handleSubmit}>
-        <div className="login-box">
-          <div className="login-title">Bienvenido</div>
-
-          <div className="input-group">
-            <FaUserCircle />
-            <input
-              type="text"
-              value={username}
-              placeholder=" Usuario..."
-              onChange={(e) => setUsername(e.target.value)}
-            />
+        {/* LADO IZQUIERDO (imagen de fondo + texto, SIN icono) */}
+        <div className="login-branding">
+          <div className="branding-overlay">
+            <h1>Econoconnect</h1>
+            <p>
+              Red Social de Economía, donde la educación financiera es para todos: aprende, comparte y crece con nosotros.
+            </p>
           </div>
-
-          <div className="input-group">
-            <FaLock />
-            <input
-              type="password"
-              value={password}
-              placeholder="Contraseña..."
-              onChange={(e) => setPassword(e.target.value)}
-            />
         </div>
 
-          <button className="btn" type="submit">
-            Listo <span>🙂</span>
-          </button>
+        {/* LADO DERECHO (formulario tipo imagen anterior) */}
+        <div className="login-container">
+          <div className="login-logo">
+            <img src="/img/logo-ec.png" alt="Econoconnect" />
+          </div>
+          <h2>Inicia Sesión</h2>
 
-          <a href="/forgot">
-            <div className="back-link">¿Olvidaste tu contraseña?</div>
-          </a>
-          <Link to="/register" className="back-link">
-            Registrarse
-          </Link>
+          <form onSubmit={handleSubmit} className="login-form">
+            <label>Username:</label>
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
 
-        {message && (
-          <p
-            id="message"
-            style={{
-              marginTop: "10px",
-              color: message.includes("exitoso") ? "#388e3c" : "#d32f2f",
-              fontWeight: "bold"
-            }}
-          >
-            {message}
+            <label>Password:</label>
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="login-options">
+              <Link to="/forgot" className="forgot-link">
+                Forgot Password?
+              </Link>
+              <label className="remember-me">
+                <input type="checkbox" />
+                Remember Me
+              </label>
+            </div>
+
+            <button type="submit" className="login-button">
+              LOGIN
+            </button>
+          </form>
+
+          {message && (
+            <p
+              className="login-message"
+              style={{
+                color: message.includes("exitoso") ? "#27ae60" : "#e74c3c",
+              }}
+            >
+              {message}
+            </p>
+          )}
+
+          <p className="signup-text">
+            Don’t have an account?{" "}
+            <Link to="/register" className="signup-link">
+              Register
+            </Link>
           </p>
-        )}
         </div>
-        </form>
       </div>
+    </div>
   );
 };
 
