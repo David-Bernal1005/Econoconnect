@@ -33,6 +33,7 @@ class User(Base):
     creation_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     last_activity_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     number_followers = Column(Integer, default=0)
+    profile_image = Column(String(length=1000000), nullable=True)  # base64
 
     # La relación se define después de importar Foro
 # Importar Foro y definir la relación al final del archivo para evitar errores de inicialización circular

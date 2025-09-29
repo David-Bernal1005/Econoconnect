@@ -37,6 +37,15 @@ class UserResponse(BaseModel):
     creation_date: datetime
     last_activity_date: datetime 
     number_followers: int
+    profile_image: str | None = None
+class UserUpdateRequest(BaseModel):
+    name: str
+    lastname: str
+    email: str
+    cellphone: str
+    direction: str
+    country: str
+    profile_image: str | None = None
 
     model_config = {
         "from_attributes": True
