@@ -14,12 +14,9 @@ import ForgotPassword from "./ForgotPassword";
 import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
 import Perfil from "./Perfil";
-<<<<<<< HEAD
 import Graficas from "./Graficas"; 
-=======
-import Chat from "./Chat";
-
->>>>>>> 8eeee24ad39e16a7f7223fb657c1751272c744eb
+import Inbox from "./Inbox";
+import ChatRoomWS from "./ChatRoomWS";
 
 import "./app.css";
 
@@ -30,6 +27,8 @@ const App = () => {
   const [nombreUsuario, setNombreUsuario] = useState(
     localStorage.getItem("nombre_usuario")
   );
+  const [selectedChat, setSelectedChat] = useState(null);
+  const userId = localStorage.getItem("user_id") ? parseInt(localStorage.getItem("user_id")) : 1;
 
   useEffect(() => {
     setNombreUsuario(localStorage.getItem("nombre_usuario"));
@@ -53,6 +52,7 @@ const App = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("nombre_usuario");
+    localStorage.removeItem("user_id");
     setNombreUsuario("");
     window.location.href = "/";
   };
@@ -70,26 +70,6 @@ const App = () => {
                 {isLogged && <Menu />}
                 {isLogged && <Exit />}
                 {isLogged && <Filter />}
-                {!isLogged && (
-                  <a
-                    href="/login"
-                    className="back-link"
-                    style={{
-                      position: "fixed",
-                      top: 30,
-                      right: 30,
-                      zIndex: 9999,
-                      background: "#ffcc00",
-                      color: "#1c2120",
-                      padding: "10px 20px",
-                      borderRadius: "8px",
-                      fontWeight: "bold",
-                      textDecoration: "none",
-                    }}
-                  >
-                    Login
-                  </a>
-                )}
               </aside>
               <div className="main-content">
                 <Search noticias={noticias} onSearch={handleSearch} />
@@ -102,7 +82,7 @@ const App = () => {
           }
         />
 
-<<<<<<< HEAD
+        {/* Otras rutas */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -110,18 +90,21 @@ const App = () => {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/misnoticias" element={<MisNoticias />} />
         <Route path="/graficas" element={<Graficas />} /> 
-=======
-  {/* Ruta de login */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      {/* Ruta para Creaciones */}
-      <Route path="/creaciones" element={<Creaciones />} />
-      <Route path="/perfil" element={<Perfil />} />
-      <Route path="/misnoticias" element={<MisNoticias />} />
-      <Route path="/chat/:chatId" element={<Chat />} />
-      <Route path="/" element={<App/>}/>
->>>>>>> 8eeee24ad39e16a7f7223fb657c1751272c744eb
+
+        <Route
+          path="/chat"
+          element={
+            !selectedChat ? (
+              <Inbox userId={userId} onSelectChat={setSelectedChat} />
+            ) : (
+              <ChatRoomWS
+                chatId={selectedChat}
+                userId={userId}
+                onBack={() => setSelectedChat(null)}
+              />
+            )
+          }
+        />
       </Routes>
     </Router>
   );

@@ -28,6 +28,7 @@ const Login = () => {
       const data = await res.json();
   localStorage.setItem("token", data.access_token);
   localStorage.setItem("nombre_usuario", data.name);
+  localStorage.setItem("user_id", data.id_user);
   setMessage("Inicio de sesión exitoso");
   window.location.href = "/";
     } catch (err) {
