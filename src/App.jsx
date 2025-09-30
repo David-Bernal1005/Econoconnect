@@ -28,7 +28,7 @@ const App = () => {
   function LoginButton() {
     const location = useLocation();
     const isLogged = Boolean(localStorage.getItem("token"));
-    if (!isLogged && location.pathname !== "/login") {
+  if (!isLogged && location.pathname !== "/login" && location.pathname !== "/register") {
       return (
         <a href="/login" style={{
           position: "fixed",
