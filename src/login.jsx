@@ -77,7 +77,7 @@ const Login = () => {
             </div>
 
             <div className="login-options">
-              <Link to="/forgot" className="forgot-link">
+              <Link to="forgot-password" className="forgot-link">
                 Forgot Password?
               </Link>
               <label className="remember-me">
