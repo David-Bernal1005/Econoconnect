@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 import Menu from "./Menu";
 import Bienvenida from "./Bienvenida";
@@ -24,6 +24,34 @@ import EditUser from "./EditUser";
 import "./app.css";
 
 const App = () => {
+  // Detectar ruta actual para ocultar el botón en /login
+  function LoginButton() {
+    const location = useLocation();
+    const isLogged = Boolean(localStorage.getItem("token"));
+    if (!isLogged && location.pathname !== "/login") {
+      return (
+        <a href="/login" style={{
+          position: "fixed",
+          top: 20,
+          right: 20,
+          zIndex: 1000,
+          background: "#222",
+          borderRadius: "50px",
+          padding: "8px 24px",
+          color: "#FFD600",
+          fontWeight: "bold",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+          textDecoration: "none",
+          display: "flex",
+          alignItems: "center"
+        }}>
+          <img src="/img/exit.svg" alt="Login" style={{ width: 28, height: 28, marginRight: 8 }} />
+          Login
+        </a>
+      );
+    }
+    return null;
+  }
   const [match, setMatch] = useState(false);
   const [searching, setSearching] = useState(false);
   const [noticias, setNoticias] = useState([]);
@@ -64,6 +92,7 @@ const App = () => {
 
   return (
     <Router>
+      <LoginButton />
       <Routes>
         <Route
           path="/"

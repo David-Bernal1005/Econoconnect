@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './notice.css';
 
 
@@ -19,6 +19,19 @@ const Notice = ({ noticia }) => {
   const link = noticia.Fuente || noticia.enlace || noticia.link || '';
   const linkText = link ? link.replace(/^https?:\/\//, '').replace(/\/$/, '') : '';
 
+  // Obtener imagen de perfil del usuario actual si no viene en la noticia
+  const [userImage, setUserImage] = useState("");
+  useEffect(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.profile_image) {
+        setUserImage(user.profile_image);
+      }
+    } catch {}
+  }, []);
+
+  const profileImage = noticia.profile_image || noticia.imagen || noticia.avatar || userImage;
+
   return (
     <div className="news-container">
       <div className="sidebar">
@@ -30,7 +43,11 @@ const Notice = ({ noticia }) => {
       <div className="content">
         <div className="user-info">
           <div className="avatar">
-            <img src={avatarSrc} alt="avatar" />
+            {profileImage ? (
+              <img src={profileImage} alt="avatar" />
+            ) : (
+              <img src={avatarSrc} alt="avatar" />
+            )}
           </div>
           <span className="username">{username}</span>
         </div>

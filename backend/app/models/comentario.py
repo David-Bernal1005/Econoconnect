@@ -9,6 +9,7 @@ class Comentario(Base):
     id_comentario = Column(Integer, primary_key=True, autoincrement=True)
     publicacion_id = Column(Integer, ForeignKey("publicacion.id_publicacion"))
     id_user = Column(Integer, ForeignKey("users.id_user"))
+    foro_id = Column(Integer, ForeignKey("foro.id_foro"))
     contenido = Column(Text)
     estado = Column(Enum("activo", "eliminado", name="estado_comentario"), default="activo")
     fecha_creacion = Column(TIMESTAMP, server_default=func.now())

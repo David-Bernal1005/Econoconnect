@@ -54,7 +54,7 @@ const Login = () => {
           <h2>Inicia Sesión</h2>
 
           <form onSubmit={handleSubmit} className="login-form">
-            <label>Username:</label>
+            <label>Usuario:</label>
             <div className="input-group">
               <input
                 type="text"
@@ -65,7 +65,7 @@ const Login = () => {
               />
             </div>
 
-            <label>Password:</label>
+            <label>Contraseña:</label>
             <div className="input-group">
               <input
                 type="password"
