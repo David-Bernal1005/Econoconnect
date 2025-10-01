@@ -19,7 +19,7 @@ const Notice = ({ noticia }) => {
   // Normaliza los datos para mostrar correctamente
   // Mostrar nombre y foto del usuario creador de la noticia (igual que en Perfil.jsx)
   let username = 'Usuario';
-  let userImage = '/img/profile.png';
+  let userImage = null;
   if (noticia && noticia.usuario) {
     if (typeof noticia.usuario === 'object') {
       username = noticia.usuario.username || noticia.usuario.name || noticia.usuario.Usuario || 'Usuario';
@@ -59,13 +59,11 @@ const Notice = ({ noticia }) => {
 
       <div className="content">
         <div className="user-info">
-          <div className="avatar">
-            {userImage && userImage.startsWith('data:image') ? (
-              <img src={userImage} alt="User" />
-            ) : (
-              <img src="/img/profile.png" alt="User" />
-            )}
-          </div>
+          {userImage && userImage.startsWith('data:image') ? (
+            <div className="avatar"><img src={userImage} alt="User" /></div>
+          ) : (
+            <div className="avatar"><img src={avatarSrc} alt="avatar" /></div>
+          )}
           <span className="username">{username}</span>
         </div>
 
