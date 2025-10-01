@@ -18,3 +18,13 @@ class NoticiaSchema(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class NoticiaStatusResponse(BaseModel):
+    Id_Noticia: int
+    titulo: str
+    activa: int
+    mensaje: str = "Operación exitosa"
+
+    model_config = {
+        "from_attributes": True
+    }

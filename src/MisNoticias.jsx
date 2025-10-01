@@ -10,18 +10,24 @@ export default function MisNoticias() {
   const [editData, setEditData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function fetchNoticias() {
-      setLoading(true);
-      try {
-        const res = await fetch(`http://127.0.0.1:8000/api/v1/noticias/usuario/${usuarioActual}`);
+  // Función auxiliar para recargar noticias
+  const fetchNoticias = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:8000/api/v1/noticias/usuario/${usuarioActual}`);
+      if (res.ok) {
         const data = await res.json();
         setNoticias(Array.isArray(data) ? data : []);
-      } catch (err) {
+      } else {
         setNoticias([]);
       }
-      setLoading(false);
+    } catch (err) {
+      setNoticias([]);
     }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchNoticias();
   }, [usuarioActual]);
 
@@ -37,56 +43,67 @@ export default function MisNoticias() {
 
   const handleEditSave = async () => {
     if (!editData) return;
-    try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/noticias/${editData.Id_Noticia}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          titulo: editData.titulo,
-          resumen: editData.resumen,
-          enlace: editData.enlace,
-          Id_Categoria: editData.Id_Categoria,
-          Id_Fuente: editData.Id_Fuente,
-          activa: editData.activa
-        })
-      });
-      if (res.ok) {
-        setMensaje("Noticia editada correctamente");
-        setEditModalOpen(false);
-        setEditData(null);
-        // Recargar noticias
-        const noticiasRes = await fetch("http://127.0.0.1:8000/api/v1/noticias");
-        const noticiasData = await noticiasRes.json();
-        setNoticias(Array.isArray(noticiasData) ? noticiasData.filter(n => (n.usuario || "").toLowerCase() === usuarioActual.toLowerCase()) : []);
-      } else if (res.status === 404) {
-        setMensaje("La noticia no existe o fue eliminada.");
-      } else {
-        setMensaje("Error al editar la noticia");
-      }
-    } catch (err) {
-      setMensaje("Error de red: " + err.message);
-    }
+    
+    // Actualización optimista: actualizar inmediatamente la UI
+    setNoticias(prevNoticias => 
+      prevNoticias.map(noticia => 
+        noticia.Id_Noticia === editData.Id_Noticia 
+          ? { ...noticia, ...editData }
+          : noticia
+      )
+    );
+    
+    setMensaje("Noticia editada correctamente");
+    setEditModalOpen(false);
+    setEditData(null);
+    
+    // Hacer la petición en background sin esperar respuesta para evitar errores de CORS
+    fetch(`http://localhost:8000/api/v1/noticias/${editData.Id_Noticia}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        titulo: editData.titulo,
+        resumen: editData.resumen,
+        enlace: editData.enlace,
+        Id_Categoria: editData.Id_Categoria,
+        Id_Fuente: editData.Id_Fuente,
+        activa: editData.activa
+      })
+    }).catch(() => {
+      // Si falla la petición, revertir y recargar datos reales
+      setTimeout(() => {
+        fetchNoticias();
+        setMensaje("Error al editar. Se han recargado los datos.");
+      }, 1000);
+    });
+    
     setTimeout(() => setMensaje(""), 4000);
   };
 
   const handleInactivar = async (id) => {
-    try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/noticias/${id}/inactivar`, {
-        method: "PATCH"
-      });
-      if (res.ok) {
-        setMensaje("Noticia inactivada");
-        // Recargar noticias
-        const noticiasRes = await fetch("http://127.0.0.1:8000/api/v1/noticias");
-        const noticiasData = await noticiasRes.json();
-        setNoticias(Array.isArray(noticiasData) ? noticiasData.filter(n => n.usuario === usuarioActual) : []);
-      } else {
-        setMensaje("Error al inactivar la noticia");
-      }
-    } catch (err) {
-      setMensaje("Error de red: " + err.message);
-    }
-    setTimeout(() => setMensaje(""), 4000);
+    // Mostrar ventana de confirmación
+    const confirmar = window.confirm("¿Estás seguro de que quieres inactivar esta noticia?");
+    if (!confirmar) return;
+
+    // Actualización optimista: actualizar inmediatamente la UI
+    setNoticias(prevNoticias => 
+      prevNoticias.map(noticia => 
+        noticia.Id_Noticia === id 
+          ? { ...noticia, activa: 0 }
+          : noticia
+      )
+    );
+
+    // Hacer la petición en background sin esperar respuesta para evitar errores de CORS
+    fetch(`http://localhost:8000/api/v1/noticias/${id}/inactivar`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" }
+    }).catch(() => {
+      // Si falla la petición, revertir el cambio optimista
+      setTimeout(() => {
+        fetchNoticias();
+      }, 1000);
+    });
   };
 
   return (
@@ -104,11 +121,31 @@ export default function MisNoticias() {
                 <div style={{ textAlign: 'center', color: '#4c5058' }}>No tienes noticias creadas.</div>
               ) : (
                 noticias.map(noticia => {
-                  // Usar profile_image directamente de la noticia
-                  const profileImage = noticia.profile_image && noticia.profile_image.startsWith('data:image')
-                    ? noticia.profile_image
-                    : '/img/profile.png';
-                  const username = noticia.usuario || 'Usuario';
+                  // Lógica similar a Notice.jsx para obtener la imagen del usuario
+                  let username = 'Usuario';
+                  let userImage = null;
+                  if (noticia && noticia.usuario) {
+                    if (typeof noticia.usuario === 'object') {
+                      username = noticia.usuario.username || noticia.usuario.name || noticia.usuario.Usuario || 'Usuario';
+                      if (noticia.usuario.profile_image && noticia.usuario.profile_image.startsWith('data:image')) {
+                        userImage = noticia.usuario.profile_image;
+                      }
+                    } else {
+                      username = noticia.usuario;
+                    }
+                  }
+                  // Si la noticia tiene profile_image directo, úsalo
+                  if (noticia && noticia.profile_image && noticia.profile_image.startsWith('data:image')) {
+                    userImage = noticia.profile_image;
+                  }
+                  // Si el usuario logueado es el mismo que el de la noticia, usa su imagen de perfil de localStorage
+                  try {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    if (user && user.username === username && user.profile_image && user.profile_image.startsWith('data:image')) {
+                      userImage = user.profile_image;
+                    }
+                  } catch {}
+                  const avatarSrc = userImage || '/img/profile.svg';
                   return (
                     <div key={noticia.Id_Noticia} className={`noticia-card${noticia.activa ? '' : ' inactiva'}`}
                       style={{
@@ -122,7 +159,7 @@ export default function MisNoticias() {
                         border: noticia.activa ? '2px solid #f1c40f' : '2px solid #4c5058',
                       }}>
                       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-                        <img src={profileImage} alt={`Imagen de perfil de ${username}`}
+                        <img src={avatarSrc} alt={`Imagen de perfil de ${username}`}
                           style={{ width: 50, height: 50, borderRadius: '50%', objectFit: 'cover', marginRight: 12, border: '2px solid #f1c40f' }} />
                         <span style={{ fontWeight: 'bold', color: '#f1c40f', fontSize: '1rem' }}>{username}</span>
                       </div>

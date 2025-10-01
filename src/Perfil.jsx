@@ -80,12 +80,12 @@ const Perfil = () => {
         </ul>
       </div>
 
-      {/* Botón salir */}
+      {/* Botón salir
       <div className="sign-out">
         <a href="/exit">
           <img src="/img/exit.svg" alt="Exit" />
         </a>
-      </div>
+      </div> */}
 
       {/* Contenido perfil */}
       <div className="i1">
@@ -139,7 +139,9 @@ const Perfil = () => {
           </div>
           <div className="info-row">
             <span className="label">Country</span>
-            <span className="value">{user.country}</span>
+            <span className="value">
+              {user.pais ? user.pais.nombre : (user.country || 'No especificado')}
+            </span>
           </div>
           <div className="info-button">
             <button onClick={handleEdit}>Edit</button>
