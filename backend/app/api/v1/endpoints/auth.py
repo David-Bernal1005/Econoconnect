@@ -26,7 +26,7 @@ reset_codes = {}  # {email: (code, timestamp)}
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587  # Puerto para Gmail con STARTTLS
 SMTP_USER = "brandonquintero028@gmail.com"  # Cambia por el correo que enviará los mensajes
-SMTP_PASS = "cnsc hkwo sofj qked"  # Cambia por la contraseña de aplicación de Gmail
+SMTP_PASS = "gkai uqfu jhwg zrcr"  # Cambia por la contraseña de aplicación de Gmail
 
 def send_email(to_email, subject, body):
     msg = MIMEMultipart()
@@ -135,3 +135,13 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
         "name": user.name,
         "id_user": user.id_user
     }
+
+# --- Asegurando que la función get_current_user esté definida ---
+
+def get_current_user(
+    # ...tus dependencias, ej.:
+    # token: str = Depends(oauth2_scheme),
+    # db: Session = Depends(get_db)
+):
+    # ...tu lógica para obtener y retornar el usuario actual...
+    pass  # Reemplazar con la implementación real

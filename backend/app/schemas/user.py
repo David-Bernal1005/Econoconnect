@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 from app.models.user import StateUser
@@ -34,10 +35,12 @@ class UserResponse(BaseModel):
     rol: RoleEnum
     email: EmailStr | None = None 
     state: StateUser
-    creation_date: datetime
-    last_activity_date: datetime 
+    creation_date: Optional[datetime] = None
+    last_activity_date: Optional[datetime] = None 
     number_followers: int
     profile_image: str | None = None
+    class Config:
+        orm_mode = True
 class UserUpdateRequest(BaseModel):
     name: str
     lastname: str

@@ -206,6 +206,7 @@ body{
     margin-left: 180px; 
     margin-top: 100px;
     padding-bottom: 100px;
+    height: 765px;
 
 }
 .i1 {
@@ -370,3 +371,89 @@ body{
   cursor: pointer;
   font-family: 'Open Sans', sans-serif;
 }
+
+.i1 {
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+/* Contenedor derecho que agrupa detalles + sugeridos */
+.right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.suggested-card {
+  background-color: #fef5e8;
+  border: 1px solid #111;
+  padding: 25px;
+  margin-top: -30px;
+  height: 300px;
+}
+
+.suggested-card h3 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #222;
+  text-align: center;
+  font-weight: bold;
+}
+
+.suggested-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.suggested-item {
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  width: 180px; /* más grande */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 200px;
+}
+
+.suggested-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.suggested-item img {
+  width: 120px; /* más grande */
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  border: 3px solid #fef5e8;
+}
+
+.suggested-item h4 {
+  margin: 0px 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+}
+
+.suggested-item button {
+  background-color: #3a3a3d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  display: block;        
+   margin: 10px auto 0 auto;       
+}
+
+
+.suggested-item button:hover {
+  background-color: #111;
+}
+
