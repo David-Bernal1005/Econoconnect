@@ -32,13 +32,9 @@ const Register = () => {
         body: JSON.stringify({
           name: formData.usua_nombre,
           lastname: formData.usua_apellido,
-          cellphone: formData.usua_celular,
-          direction: formData.usua_direccion,
           email: formData.usua_email,
-          country: formData.usua_pais,
           username: formData.usua_usuario,
           password: formData.usua_password,
-          rol: formData.usua_rol_fk,
         }),
       });
       if (response.ok) {
@@ -46,7 +42,8 @@ const Register = () => {
         setMensajeColor("#388e3c");
       } else {
         const data = await response.json();
-        setMensaje(data.detail || "Error en el registro");
+        const detail = data.detail;
+        setMensaje(typeof detail === 'string' ? detail : JSON.stringify(detail) || "Error en el registro");
         setMensajeColor("#d32f2f");
       }
     } catch (err) {

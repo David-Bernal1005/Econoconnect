@@ -30,8 +30,8 @@ class User(Base):
     country = Column(String(50), nullable=False)
     rol = Column(Enum(RoleEnum), nullable=False, default=RoleEnum.usuario)
     state = Column(Enum(StateUser), default=StateUser.activo, nullable=False)
-    creation_date = Column(TIMESTAMP, default=func.now(), nullable=False)
-    last_activity_date = Column(TIMESTAMP, default=func.now(), nullable=False)
+    creation_date = Column(TIMESTAMP, server_default=func.now(), nullable=False)
+    last_activity_date = Column(TIMESTAMP, nullable=True)
     number_followers = Column(Integer, default=0)
     profile_image = Column(String(length=1000000), nullable=True)  # base64
     comentarios = relationship("Comentario", back_populates="autor")
