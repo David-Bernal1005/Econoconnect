@@ -1,149 +1,223 @@
-# tests/test_noticias.py
 import pytest
 from fastapi.testclient import TestClient
-import sys
-import os
-# Añadir la carpeta 'backend' al sys.path para que los imports funcionen
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from app.main import app
+from app.models.noticias import Noticia
+from app.models.fuentes import Fuente
+from app.models.categorias import Categoria
+from app.models.user import User, StateUser
+from datetime import datetime
 
-client = TestClient(app)
 
-NOTICIAS_PATHS = [
-    "/api/v1/noticias",
-    "/api/v1/news",
-    "/noticias",
-    "/news",
-]
-
-def try_paths(method, candidates, json=None, headers=None):
-    """Intenta rutas en candidates y devuelve (ruta, response) del primer endpoint no 404/405."""
-    for p in candidates:
-        if method == "post":
-            resp = client.post(p, json=json, headers=headers or {})
-        else:
-            resp = client.get(p, headers=headers or {})
-        if resp.status_code not in (404, 405):
-            return p, resp
-    return None, None
-
-def test_get_noticias_devuelve_lista():
-    get_path, resp = try_paths("get", NOTICIAS_PATHS)
-    assert get_path is not None, "No se encontró endpoint GET de noticias entre los candidatos."
-    assert resp.status_code == 200, f"GET {get_path} debe devolver 200, devolvió {resp.status_code}"
-    assert isinstance(resp.json(), list), "GET /noticias debe devolver una lista (aunque esté vacía)."
-
-def test_post_noticia_sin_asumir_auth():
-    """
-    Prueba simple para POST /noticias.
-    Acepta varios comportamientos comunes:
-      - Si el endpoint requiere autenticación: 401 o 403.
-      - Si el payload es inválido: 422.
-      - Si el endpoint permite crear directamente: 200 o 201.
-    """
-    payload = {
-        "titulo": "Prueba rápida",
-        "resumen": "Contenido de prueba.",
-        "enlace": "http://ejemplo.com",
-        "fecha_publicacion": "2025-09-25T00:00:00",
-        "categoria": "General",
-        "usuario": "testuser"
-    }
-    post_path, resp = try_paths("post", NOTICIAS_PATHS, json=payload)
-    assert post_path is not None, "No se encontró endpoint POST de noticias entre los candidatos."
-
-    assert resp.status_code in (200, 201, 401, 403, 422), (
-        f"POST {post_path} devolvió un código inesperado: {resp.status_code} - {resp.text}"
+def create_test_data(test_db):
+    """Helper function to create test data"""
+    # Create user
+    user = User(
+        name="Juan",
+        lastname="Pérez",
+        cellphone="+1234567890",
+        direction="Calle 123",
+        username="juan_perez",
+        hashed_password="hashed_password",
+        rol="usuario",
+        country="Colombia",
+        email="juan@example.com",
+        state=StateUser.activo,
+        number_followers=0
     )
+    test_db.add(user)
+    test_db.commit()
+    
+    # Create category
+    categoria = Categoria(nombre="Tecnología", descripcion="Noticias de tecnología")
+    test_db.add(categoria)
+    test_db.commit()
+    
+    # Create source
+    fuente = Fuente(nombre="TechNews", url="https://technews.com", descripcion="Portal de tecnología")
+    test_db.add(fuente)
+    test_db.commit()
+    
+    return user, categoria, fuente
 
-    # Si la creación fue exitosa (200/201), comprobar que aparece en el GET
-    if resp.status_code in (200, 201):
-        get_path, rget = try_paths("get", NOTICIAS_PATHS)
-        assert get_path is not None and rget.status_code == 200
-        items = rget.json()
-        assert any(
-            isinstance(n, dict) and (
-                n.get("titulo") == payload["titulo"] or
-                payload["resumen"] in (n.get("resumen") or "")
-            )
-            for n in items
-        ), "La noticia creada no apareció en el listado tras POST exitoso."
 
-def test_get_noticias_usuario():
-    # Crear noticia para usuario específico
-    payload = {
-        "titulo": "Noticia de usuario",
-        "resumen": "Solo para test usuario.",
-        "enlace": "http://usuario.com",
-        "fecha_publicacion": "2025-09-25T00:00:00",
-        "categoria": "Test",
-        "usuario": "usuario_test"
+def test_get_noticias_usuario_empty(client: TestClient, test_db):
+    """Test getting user news when user has no news"""
+    user, _, _ = create_test_data(test_db)
+    
+    response = client.get(f"/api/v1/noticias/usuario/{user.username}")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_get_noticias_usuario_with_data(client: TestClient, test_db):
+    """Test getting user news with data"""
+    user, categoria, fuente = create_test_data(test_db)
+    
+    # Create news
+    noticia = Noticia(
+        titulo="Nueva tecnología",
+        resumen="Resumen de la noticia",
+        enlace="https://example.com/news1",
+        usuario=user.username,
+        Id_Categoria=categoria.Id_Categoria,
+        Id_Fuente=fuente.Id_Fuente,
+        activa=1,
+        etiquetas="tecnología,innovación"
+    )
+    test_db.add(noticia)
+    test_db.commit()
+    
+    response = client.get(f"/api/v1/noticias/usuario/{user.username}")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["titulo"] == "Nueva tecnología"
+    assert data[0]["etiquetas"] == ["tecnología", "innovación"]
+
+
+def test_update_noticia_success(client: TestClient, test_db):
+    """Test successful news update"""
+    user, categoria, fuente = create_test_data(test_db)
+    
+    # Create news
+    noticia = Noticia(
+        titulo="Título original",
+        resumen="Resumen original",
+        enlace="https://example.com/original",
+        usuario=user.username,
+        Id_Categoria=categoria.Id_Categoria,
+        Id_Fuente=fuente.Id_Fuente,
+        activa=1
+    )
+    test_db.add(noticia)
+    test_db.commit()
+    test_db.refresh(noticia)
+    
+    # Update news
+    update_data = {
+        "titulo": "Título actualizado",
+        "resumen": "Resumen actualizado"
     }
-    post_path, resp = try_paths("post", NOTICIAS_PATHS, json=payload)
-    assert resp.status_code in (200, 201)
-    # Obtener noticias del usuario
-    get_path, resp = try_paths("get", [f"/api/v1/noticias/usuario/{payload['usuario']}"])
-    assert get_path is not None and resp.status_code == 200
-    items = resp.json()
-    assert any(n.get("titulo") == payload["titulo"] for n in items)
+    
+    response = client.put(f"/api/v1/noticias/{noticia.Id_Noticia}", json=update_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["titulo"] == "Título actualizado"
+    assert data["resumen"] == "Resumen actualizado"
 
-def test_editar_noticia():
-    # Crear noticia
-    payload = {
-        "titulo": "Editar noticia",
-        "resumen": "Original.",
-        "enlace": "http://editar.com",
-        "fecha_publicacion": "2025-09-25T00:00:00",
-        "categoria": "Test",
-        "usuario": "edituser"
-    }
-    post_path, resp = try_paths("post", NOTICIAS_PATHS, json=payload)
-    assert resp.status_code in (200, 201)
-    noticia_id = resp.json().get("Id_Noticia")
-    # Editar noticia
-    edit_payload = {"titulo": "Editada", "resumen": "Modificada."}
-    put_path = f"/api/v1/noticias/{noticia_id}"
-    resp = client.put(put_path, json=edit_payload)
-    assert resp.status_code == 200
-    data = resp.json()
-    assert data["titulo"] == "Editada"
-    assert data["resumen"] == "Modificada."
 
-def test_inactivar_noticia():
-    # Crear noticia
-    payload = {
-        "titulo": "Inactivar noticia",
-        "resumen": "Activa.",
-        "enlace": "http://inactivar.com",
-        "fecha_publicacion": "2025-09-25T00:00:00",
-        "categoria": "Test",
-        "usuario": "inactuser"
+def test_update_noticia_not_found(client: TestClient, test_db):
+    """Test update non-existent news"""
+    update_data = {
+        "titulo": "Título actualizado"
     }
-    post_path, resp = try_paths("post", NOTICIAS_PATHS, json=payload)
-    assert resp.status_code in (200, 201)
-    noticia_id = resp.json().get("Id_Noticia")
-    # Inactivar noticia
-    patch_path = f"/api/v1/noticias/{noticia_id}/inactivar"
-    resp = client.patch(patch_path)
-    assert resp.status_code == 200
-    data = resp.json()
+    
+    response = client.put("/api/v1/noticias/999", json=update_data)
+    assert response.status_code == 404
+    assert "Noticia no encontrada" in response.json()["detail"]
+
+
+def test_inactivar_noticia_success(client: TestClient, test_db):
+    """Test successful news deactivation"""
+    user, categoria, fuente = create_test_data(test_db)
+    
+    # Create active news
+    noticia = Noticia(
+        titulo="Título test",
+        resumen="Resumen test",
+        enlace="https://example.com/test",
+        usuario=user.username,
+        Id_Categoria=categoria.Id_Categoria,
+        Id_Fuente=fuente.Id_Fuente,
+        activa=1
+    )
+    test_db.add(noticia)
+    test_db.commit()
+    test_db.refresh(noticia)
+    
+    response = client.patch(f"/api/v1/noticias/{noticia.Id_Noticia}/inactivar")
+    assert response.status_code == 200
+    data = response.json()
     assert data["activa"] == 0
 
-def test_editar_noticia_inexistente():
-    # Editar noticia que no existe
-    put_path = "/api/v1/noticias/999999"
-    edit_payload = {"titulo": "No existe"}
-    resp = client.put(put_path, json=edit_payload)
-    assert resp.status_code == 404
 
-def test_inactivar_noticia_inexistente():
-    # Inactivar noticia que no existe
-    patch_path = "/api/v1/noticias/999999/inactivar"
-    resp = client.patch(patch_path)
-    assert resp.status_code == 404
+def test_inactivar_noticia_not_found(client: TestClient, test_db):
+    """Test deactivate non-existent news"""
+    response = client.patch("/api/v1/noticias/999/inactivar")
+    assert response.status_code == 404
+    assert "Noticia no encontrada" in response.json()["detail"]
 
-def test_post_noticia_invalida():
-    # Payload inválido (falta campo obligatorio)
-    payload = {"titulo": "Sin resumen"}
-    post_path, resp = try_paths("post", NOTICIAS_PATHS, json=payload)
-    assert resp.status_code == 422
+
+def test_get_all_noticias_empty(client: TestClient, test_db):
+    """Test getting all news when database is empty"""
+    response = client.get("/api/v1/noticias")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_get_all_noticias_with_data(client: TestClient, test_db):
+    """Test getting all news with data"""
+    user, categoria, fuente = create_test_data(test_db)
+    
+    # Create multiple news
+    noticias = [
+        Noticia(
+            titulo="Noticia 1",
+            resumen="Resumen 1",
+            enlace="https://example.com/1",
+            usuario=user.username,
+            Id_Categoria=categoria.Id_Categoria,
+            Id_Fuente=fuente.Id_Fuente,
+            activa=1
+        ),
+        Noticia(
+            titulo="Noticia 2",
+            resumen="Resumen 2",
+            enlace="https://example.com/2",
+            usuario=user.username,
+            Id_Categoria=categoria.Id_Categoria,
+            Id_Fuente=fuente.Id_Fuente,
+            activa=1
+        )
+    ]
+    
+    for noticia in noticias:
+        test_db.add(noticia)
+    test_db.commit()
+    
+    response = client.get("/api/v1/noticias")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+
+
+def test_create_noticia_success(client: TestClient, test_db):
+    """Test successful news creation"""
+    user, categoria, fuente = create_test_data(test_db)
+    
+    noticia_data = {
+        "titulo": "Nueva noticia",
+        "resumen": "Resumen de la nueva noticia",
+        "enlace": "https://example.com/nueva",
+        "usuario": user.username,
+        "Id_Categoria": categoria.Id_Categoria,
+        "Id_Fuente": fuente.Id_Fuente,
+        "etiquetas": "tag1,tag2,tag3"
+    }
+    
+    response = client.post("/api/v1/noticias", json=noticia_data)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["titulo"] == "Nueva noticia"
+    assert data["usuario"] == user.username
+    assert "Id_Noticia" in data
+
+
+def test_create_noticia_missing_data(client: TestClient, test_db):
+    """Test news creation with missing required data"""
+    noticia_data = {
+        "titulo": "Título incompleto"
+        # Missing required fields
+    }
+    
+    response = client.post("/api/v1/noticias", json=noticia_data)
+    assert response.status_code == 422  # Validation error

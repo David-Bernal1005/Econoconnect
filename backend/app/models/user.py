@@ -41,8 +41,6 @@ class User(Base):
     comentarios = relationship("Comentario", back_populates="autor")
     foros = relationship("Foro", back_populates="autor")
 
-    # La relación se define después de importar Foro
-# Importar modelos y definir la relación al final del archivo para evitar errores de inicialización circular
+# Importar modelos al final del archivo para evitar errores de inicialización circular
 from .foro import Foro
 from .paises import Pais
-User.foros = relationship("Foro", back_populates="autor")
