@@ -80,12 +80,12 @@ const Perfil = () => {
         </ul>
       </div>
 
-      {/* Botón salir */}
+      {/* Botón salir
       <div className="sign-out">
         <a href="/exit">
           <img src="/img/exit.svg" alt="Exit" />
         </a>
-      </div>
+      </div> */}
 
       {/* Contenido perfil */}
       <div className="i1">
