@@ -10,9 +10,6 @@ from sqlalchemy import engine_from_config, pool
 # Importar engine, MARIADB_URL y Base
 from app.db.session import engine, MARIADB_URL, Base
 
-# Importar todos los modelos
-from app.models import *
-
 config = context.config
 
 if config.config_file_name is not None:

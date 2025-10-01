@@ -29,4 +29,3 @@ from app.models.tiposcontenido import TipoContenido
 from app.models.usuariorol import UsuarioRol
 from app.models.usuarioseguidor import UsuarioSeguidor
 from app.models.usuarioseguido import UsuarioSeguido
-
