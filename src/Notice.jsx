@@ -52,9 +52,14 @@ const Notice = ({ noticia }) => {
   return (
     <div className="news-container">
       <div className="sidebar">
-        <button className="sidebar-button">Divisas</button>
-        <button className="sidebar-button">M. Internacional</button>
-        <button className="sidebar-button">Criptomonedas</button>
+        {/* Mostrar etiquetas si existen y no están vacías */}
+        {Array.isArray(noticia.etiquetas) && noticia.etiquetas.length > 0
+          ? noticia.etiquetas.map((tag, idx) => (
+              <button key={tag + '-' + idx} className="sidebar-button">{tag}</button>
+            ))
+          : noticia.categoria
+            ? <button className="sidebar-button">{noticia.categoria}</button>
+            : null}
       </div>
 
       <div className="content">

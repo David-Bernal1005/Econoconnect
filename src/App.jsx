@@ -101,7 +101,7 @@ const App = () => {
               <aside>
                 {isLogged && <Menu />}
                 {isLogged && <Exit />}
-                {isLogged && <Filter />}
+                {/* Filter desactivado temporalmente */}
               </aside>
               <div className="main-content">
                 <Search noticias={noticias} onSearch={handleSearch} />

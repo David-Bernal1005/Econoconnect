@@ -13,6 +13,7 @@ class NoticiaSchema(BaseModel):
     usuario: Optional[str] = None
     activa: Optional[int] = 1
     profile_image: Optional[str] = None
+    etiquetas: Optional[list[str]] = []
 
     model_config = {
         "from_attributes": True

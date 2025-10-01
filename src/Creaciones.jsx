@@ -25,19 +25,19 @@ export default function Creaciones() {
 
   // Cargar categorías y noticias
   useEffect(() => {
-    async function fetchCategorias() {
+    async function fetchEtiquetas() {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/v1/categorias");
+        const res = await fetch("http://127.0.0.1:8000/api/v1/etiquetas");
         const data = await res.json();
-        let tags = Array.isArray(data) ? data.map(cat => cat.Nombre_Categoria) : [];
-        // Fallback si la API no responde o no hay categorías
+        // Suponiendo que la respuesta es un array de objetos con la propiedad 'nombre'
+        let tags = Array.isArray(data) ? data.map(et => et.nombre) : [];
+        // Fallback si la API no responde o no hay etiquetas
         if (!tags.length) {
           tags = ["Renta Variable", "Divisas", "Criptomonedas", "Noticias"];
         }
         setAllTags(tags);
         setSelectedTags(prev => prev.length === 0 ? tags : prev);
       } catch (err) {
-        const tags = ["Renta Variable", "Divisas", "Criptomonedas", "Noticias"];
         setAllTags(tags);
         setSelectedTags(tags);
       }
@@ -53,7 +53,7 @@ export default function Creaciones() {
       }
       setLoadingNoticias(false);
     }
-    fetchCategorias();
+  fetchEtiquetas();
     fetchNoticias();
   }, []);
 
@@ -73,7 +73,6 @@ export default function Creaciones() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const categoria = selectedTags.length > 0 ? selectedTags[0] : "";
     if (!usuarioActual) {
       setMensaje("Debes iniciar sesión para crear noticias.");
   setTimeout(() => setMensaje(""), 4000);
@@ -84,7 +83,7 @@ export default function Creaciones() {
       resumen: formData.descripcion,
       enlace: formData.soporte,
       fecha_publicacion: new Date().toISOString(),
-      categoria: categoria,
+      etiquetas: selectedTags,
       usuario: usuarioActual
     };
     try {

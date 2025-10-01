@@ -60,8 +60,8 @@ function Search({ noticias = [], onSearch }) {
     };
 
         return (
-            <div className="search-container">
-                <div className="search">
+            <div className="search-container" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', width: '100%', marginTop: '32px' }}>
+                <div className="search" style={{ minWidth: '480px', maxWidth: '640px', width: '40vw', marginRight: '5vw' }}>
                     <span className="search-icon"><img src="img/search.svg" alt="" /></span>
                     <input className="search-input" type="text" placeholder="Buscar noticia..." value={searchTerm} onChange={handleChange} />
                 </div>

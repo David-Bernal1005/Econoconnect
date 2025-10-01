@@ -20,7 +20,8 @@ def get_noticias_usuario(usuario: str, db: Session = Depends(get_db)):
     resultado = []
     for noticia in noticias:
         noticia_dict = noticia.__dict__.copy()
-        # El campo profile_image ya está en la noticia
+        etiquetas_str = noticia_dict.get("etiquetas", "")
+        noticia_dict["etiquetas"] = etiquetas_str.split(",") if etiquetas_str else []
         resultado.append(noticia_dict)
     return resultado
 
@@ -67,6 +68,8 @@ def get_noticias(db: Session = Depends(get_db)):
     resultado = []
     for noticia in noticias:
         noticia_dict = noticia.__dict__.copy()
+        etiquetas_str = noticia_dict.get("etiquetas", "")
+        noticia_dict["etiquetas"] = etiquetas_str.split(",") if etiquetas_str else []
         resultado.append(noticia_dict)
     return resultado
 
@@ -80,6 +83,7 @@ class NoticiaCreateSchema(BaseModel):
     fecha_publicacion: str
     categoria: str | None = None
     usuario: str | None = None
+    etiquetas: list[str] | None = []
 
 @router.post("/noticias", response_model=NoticiaSchema, status_code=201)
 def create_noticia(noticia: NoticiaCreateSchema, db: Session = Depends(get_db)):
@@ -113,6 +117,9 @@ def create_noticia(noticia: NoticiaCreateSchema, db: Session = Depends(get_db)):
         profile_image = None
         if user and user.profile_image:
             profile_image = user.profile_image
+        etiquetas_str = ""
+        if hasattr(noticia, "etiquetas") and noticia.etiquetas:
+            etiquetas_str = ",".join(noticia.etiquetas)
         nueva_noticia = Noticia(
             titulo=noticia.titulo,
             resumen=noticia.resumen,
@@ -121,12 +128,14 @@ def create_noticia(noticia: NoticiaCreateSchema, db: Session = Depends(get_db)):
             Id_Categoria=categoria.Id_Categoria,
             Id_Fuente=fuente.Id_Fuente,
             usuario=noticia.usuario,
-            profile_image=profile_image
+            profile_image=profile_image,
+            etiquetas=etiquetas_str
         )
         db.add(nueva_noticia)
         db.commit()
         db.refresh(nueva_noticia)
         noticia_dict = nueva_noticia.__dict__.copy()
+        noticia_dict["etiquetas"] = etiquetas_str.split(",") if etiquetas_str else []
         return noticia_dict
     except Exception as e:
         print("Error al crear noticia:", e)

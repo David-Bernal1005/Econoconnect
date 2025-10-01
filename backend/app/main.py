@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1.endpoints import auth, noticias, publicaciones, graficas, user, user_update
+from app.api.v1.endpoints import auth, noticias, publicaciones, graficas, user, user_update, etiquetas
 
 app = FastAPI(title="Econoconnect")
 
@@ -16,12 +16,7 @@ def list_endpoints():
 # Middleware CORS para permitir peticiones desde el frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000"
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,3 +28,4 @@ app.include_router(publicaciones.router, prefix="/api/v1")
 app.include_router(graficas.router, prefix="/api/v1", tags=["graficas"])
 app.include_router(user.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(user_update.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(etiquetas.router, prefix="/api/v1")

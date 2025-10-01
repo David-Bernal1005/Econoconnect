@@ -15,3 +15,4 @@ class Noticia(Base):
     usuario = Column(String(100))
     activa = Column(Integer, default=1)  # 1=activa, 0=inactiva
     profile_image = Column(String(length=1000000), nullable=True)  # base64
+    etiquetas = Column(String(1000), nullable=True)  # Guardar como string separado por comas
