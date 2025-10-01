@@ -51,6 +51,13 @@ async def update_user_me(
     current_user.country = payload.country
     if payload.profile_image is not None:
         current_user.profile_image = payload.profile_image
-    db.commit()
+        # Actualizar profile_image en todas las noticias del usuario
+        from app.models.noticias import Noticia
+        noticias = db.query(Noticia).filter((Noticia.usuario == current_user.username) | (Noticia.usuario == current_user.name)).all()
+        for noticia in noticias:
+            noticia.profile_image = payload.profile_image
+        db.commit()
+    else:
+        db.commit()
     db.refresh(current_user)
     return current_user

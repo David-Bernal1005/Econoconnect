@@ -17,7 +17,13 @@ export default function Carousel() {
                     setNoticias([]);
                     console.error('La respuesta de noticias no es un array:', data);
                 } else {
-                    setNoticias(data);
+                    // Ordena por fecha_publicacion descendente (más nueva primero)
+                    const ordenadas = [...data].sort((a, b) => new Date(b.fecha_publicacion) - new Date(a.fecha_publicacion));
+                    setNoticias(ordenadas);
+                    // Centra la más nueva (primera en el array ordenado)
+                    if (ordenadas.length > 0) {
+                        setCurrent(0);
+                    }
                 }
             })
             .catch(err => {

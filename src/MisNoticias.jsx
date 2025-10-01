@@ -103,35 +103,47 @@ export default function MisNoticias() {
               {noticias.length === 0 ? (
                 <div style={{ textAlign: 'center', color: '#4c5058' }}>No tienes noticias creadas.</div>
               ) : (
-                noticias.map(noticia => (
-                  <div key={noticia.Id_Noticia} className={`noticia-card${noticia.activa ? '' : ' inactiva'}`}
-                    style={{
-                      background: noticia.activa ? '#121826' : '#4c5058',
-                      color: noticia.activa ? '#f1c40f' : '#fff6ea',
-                      borderRadius: '12px',
-                      boxShadow: '0 2px 8px rgba(76,80,88,0.12)',
-                      padding: '20px',
-                      position: 'relative',
-                      transition: 'background 0.3s',
-                      border: noticia.activa ? '2px solid #f1c40f' : '2px solid #4c5058',
-                    }}>
-                    <h3 style={{ margin: '0 0 8px 0', fontWeight: 'bold', fontSize: '1.2rem', color: noticia.activa ? '#f1c40f' : '#fff6ea' }}>{noticia.titulo}</h3>
-                    <p style={{ margin: '0 0 8px 0', color: noticia.activa ? '#fff6ea' : '#fff6ea' }}>{noticia.resumen}</p>
-                    <span className="noticia-fecha" style={{ fontSize: '0.9rem', opacity: 0.8, color: '#f1c40f' }}>{new Date(noticia.fecha_publicacion).toLocaleString()}</span>
-                    <div className="noticia-actions" style={{ marginTop: 12, display: 'flex', gap: 12 }}>
-                      <button className="edit-btn" style={{
-                        background: '#f1c40f', color: '#1c2120', border: 'none', borderRadius: '6px', padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 1px 4px rgba(241,196,15,0.07)'
-                      }} onClick={() => handleEditClick(noticia)}>Editar</button>
-                      {noticia.activa ? (
-                        <button className="inactivar-btn" style={{
-                          background: '#4c5058', color: '#fff6ea', border: 'none', borderRadius: '6px', padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 1px 4px rgba(76,80,88,0.07)'
-                        }} onClick={() => handleInactivar(noticia.Id_Noticia)}>Inactivar</button>
-                      ) : (
-                        <span className="inactiva-label" style={{ color: '#f1c40f', fontWeight: 'bold', marginLeft: 8 }}>Inactiva</span>
-                      )}
+                noticias.map(noticia => {
+                  // Usar profile_image directamente de la noticia
+                  const profileImage = noticia.profile_image && noticia.profile_image.startsWith('data:image')
+                    ? noticia.profile_image
+                    : '/img/profile.png';
+                  const username = noticia.usuario || 'Usuario';
+                  return (
+                    <div key={noticia.Id_Noticia} className={`noticia-card${noticia.activa ? '' : ' inactiva'}`}
+                      style={{
+                        background: noticia.activa ? '#121826' : '#4c5058',
+                        color: noticia.activa ? '#f1c40f' : '#fff6ea',
+                        borderRadius: '12px',
+                        boxShadow: '0 2px 8px rgba(76,80,88,0.12)',
+                        padding: '20px',
+                        position: 'relative',
+                        transition: 'background 0.3s',
+                        border: noticia.activa ? '2px solid #f1c40f' : '2px solid #4c5058',
+                      }}>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                        <img src={profileImage} alt={`Imagen de perfil de ${username}`}
+                          style={{ width: 50, height: 50, borderRadius: '50%', objectFit: 'cover', marginRight: 12, border: '2px solid #f1c40f' }} />
+                        <span style={{ fontWeight: 'bold', color: '#f1c40f', fontSize: '1rem' }}>{username}</span>
+                      </div>
+                      <h3 style={{ margin: '0 0 8px 0', fontWeight: 'bold', fontSize: '1.2rem', color: noticia.activa ? '#f1c40f' : '#fff6ea' }}>{noticia.titulo}</h3>
+                      <p style={{ margin: '0 0 8px 0', color: noticia.activa ? '#fff6ea' : '#fff6ea' }}>{noticia.resumen}</p>
+                      <span className="noticia-fecha" style={{ fontSize: '0.9rem', opacity: 0.8, color: '#f1c40f' }}>{new Date(noticia.fecha_publicacion).toLocaleString()}</span>
+                      <div className="noticia-actions" style={{ marginTop: 12, display: 'flex', gap: 12 }}>
+                        <button className="edit-btn" style={{
+                          background: '#f1c40f', color: '#1c2120', border: 'none', borderRadius: '6px', padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 1px 4px rgba(241,196,15,0.07)'
+                        }} onClick={() => handleEditClick(noticia)}>Editar</button>
+                        {noticia.activa ? (
+                          <button className="inactivar-btn" style={{
+                            background: '#4c5058', color: '#fff6ea', border: 'none', borderRadius: '6px', padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 1px 4px rgba(76,80,88,0.07)'
+                          }} onClick={() => handleInactivar(noticia.Id_Noticia)}>Inactivar</button>
+                        ) : (
+                          <span className="inactiva-label" style={{ color: '#f1c40f', fontWeight: 'bold', marginLeft: 8 }}>Inactiva</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           )}

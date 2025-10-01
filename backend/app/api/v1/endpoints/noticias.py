@@ -15,7 +15,14 @@ router = APIRouter()
 # Endpoint para obtener todas las noticias de un usuario (activas e inactivas)
 @router.get("/noticias/usuario/{usuario}", response_model=list[NoticiaSchema])
 def get_noticias_usuario(usuario: str, db: Session = Depends(get_db)):
-    return db.query(Noticia).filter(Noticia.usuario == usuario).all()
+    from app.models.user import User
+    noticias = db.query(Noticia).filter(Noticia.usuario == usuario).all()
+    resultado = []
+    for noticia in noticias:
+        noticia_dict = noticia.__dict__.copy()
+        # El campo profile_image ya está en la noticia
+        resultado.append(noticia_dict)
+    return resultado
 
 
 class NoticiaUpdateSchema(BaseModel):
@@ -55,7 +62,13 @@ def inactivar_noticia(noticia_id: int, db: Session = Depends(get_db)):
 @router.get("/noticias", response_model=list[NoticiaSchema])
 def get_noticias(db: Session = Depends(get_db)):
     # Solo noticias activas
-    return db.query(Noticia).filter(Noticia.activa == 1).all()
+    from app.models.user import User
+    noticias = db.query(Noticia).filter(Noticia.activa == 1).all()
+    resultado = []
+    for noticia in noticias:
+        noticia_dict = noticia.__dict__.copy()
+        resultado.append(noticia_dict)
+    return resultado
 
 
 
@@ -95,6 +108,11 @@ def create_noticia(noticia: NoticiaCreateSchema, db: Session = Depends(get_db)):
             db.commit()
             db.refresh(categoria)
 
+        from app.models.user import User
+        user = db.query(User).filter((User.username == noticia.usuario) | (User.name == noticia.usuario)).first()
+        profile_image = None
+        if user and user.profile_image:
+            profile_image = user.profile_image
         nueva_noticia = Noticia(
             titulo=noticia.titulo,
             resumen=noticia.resumen,
@@ -102,12 +120,14 @@ def create_noticia(noticia: NoticiaCreateSchema, db: Session = Depends(get_db)):
             fecha_publicacion=fecha_pub,
             Id_Categoria=categoria.Id_Categoria,
             Id_Fuente=fuente.Id_Fuente,
-            usuario=noticia.usuario
+            usuario=noticia.usuario,
+            profile_image=profile_image
         )
         db.add(nueva_noticia)
         db.commit()
         db.refresh(nueva_noticia)
-        return nueva_noticia
+        noticia_dict = nueva_noticia.__dict__.copy()
+        return noticia_dict
     except Exception as e:
         print("Error al crear noticia:", e)
         raise HTTPException(status_code=500, detail=f"Error al crear noticia: {str(e)}")

@@ -14,3 +14,4 @@ class Noticia(Base):
     Id_Fuente = Column(Integer, ForeignKey("fuentes.Id_Fuente"))
     usuario = Column(String(100))
     activa = Column(Integer, default=1)  # 1=activa, 0=inactiva
+    profile_image = Column(String(length=1000000), nullable=True)  # base64
