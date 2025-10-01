@@ -17,7 +17,7 @@ def create_user(
     password: str,
     rol: RoleEnum = RoleEnum.usuario,
     country: str | None = None,
-    email: str,
+    email: str | None = None,
     state: StateUser,
     creation_date,
     last_activity_date = None,

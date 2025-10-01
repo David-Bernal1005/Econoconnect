@@ -27,15 +27,15 @@ class UserResponse(BaseModel):
     id_user: int
     name: str
     lastname: str
-    cellphone: str | None = None 
+    cellphone: str | None = None
     direction: str | None = None
     username: str
     country: str | None = None
     rol: RoleEnum
-    email: EmailStr | None = None 
+    email: EmailStr | None = None
     state: StateUser
     creation_date: datetime
-    last_activity_date: datetime 
+    last_activity_date: datetime | None = None
     number_followers: int
     profile_image: str | None = None
 class UserUpdateRequest(BaseModel):
