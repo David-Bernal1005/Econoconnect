@@ -4,7 +4,7 @@ from app.db.session import get_db
 from app.models.noticias import Noticia
 from app.models.fuentes import Fuente
 from app.models.categorias import Categoria
-from app.schemas.noticias import NoticiaSchema
+from app.schemas.noticias import NoticiaSchema, NoticiaStatusResponse
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -34,30 +34,57 @@ class NoticiaUpdateSchema(BaseModel):
     Id_Fuente: int | None = None
     activa: int | None = None
 
-@router.put("/noticias/{noticia_id}", response_model=NoticiaSchema)
+@router.put("/noticias/{noticia_id}")
 def update_noticia(noticia_id: int, noticia: NoticiaUpdateSchema = Body(...), db: Session = Depends(get_db)):
-    print(f"[DEBUG] Editando noticia con ID: {noticia_id}")
-    noticia_db = db.query(Noticia).filter(Noticia.Id_Noticia == noticia_id).first()
-    print(f"[DEBUG] Resultado de la consulta: {noticia_db}")
-    if not noticia_db:
-        print(f"[DEBUG] No se encontró la noticia con ID: {noticia_id}")
-        raise HTTPException(status_code=404, detail="Noticia no encontrada")
-    for field, value in noticia.model_dump(exclude_unset=True).items():
-        setattr(noticia_db, field, value)
-    db.commit()
-    db.refresh(noticia_db)
-    print(f"[DEBUG] Noticia actualizada: {noticia_db}")
-    return noticia_db
+    try:
+        print(f"[DEBUG] Editando noticia con ID: {noticia_id}")
+        noticia_db = db.query(Noticia).filter(Noticia.Id_Noticia == noticia_id).first()
+        print(f"[DEBUG] Resultado de la consulta: {noticia_db}")
+        if not noticia_db:
+            print(f"[DEBUG] No se encontró la noticia con ID: {noticia_id}")
+            raise HTTPException(status_code=404, detail="Noticia no encontrada")
+        
+        for field, value in noticia.model_dump(exclude_unset=True).items():
+            setattr(noticia_db, field, value)
+        db.commit()
+        db.refresh(noticia_db)
+        print(f"[DEBUG] Noticia actualizada: {noticia_db}")
+        
+        # Retornar una respuesta JSON simple
+        return {
+            "success": True,
+            "message": "Noticia editada correctamente",
+            "id": noticia_db.Id_Noticia,
+            "titulo": noticia_db.titulo
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error interno del servidor: {str(e)}")
 
-@router.patch("/noticias/{noticia_id}/inactivar", response_model=NoticiaSchema)
+@router.patch("/noticias/{noticia_id}/inactivar")
 def inactivar_noticia(noticia_id: int, db: Session = Depends(get_db)):
-    noticia_db = db.query(Noticia).filter(Noticia.Id_Noticia == noticia_id).first()
-    if not noticia_db:
-        raise HTTPException(status_code=404, detail="Noticia no encontrada")
-    noticia_db.activa = 0
-    db.commit()
-    db.refresh(noticia_db)
-    return noticia_db
+    try:
+        noticia_db = db.query(Noticia).filter(Noticia.Id_Noticia == noticia_id).first()
+        if not noticia_db:
+            raise HTTPException(status_code=404, detail="Noticia no encontrada")
+        noticia_db.activa = 0
+        db.commit()
+        db.refresh(noticia_db)
+        
+        # Retornar una respuesta JSON simple
+        return {
+            "success": True,
+            "message": "Noticia inactivada correctamente",
+            "id": noticia_db.Id_Noticia,
+            "activa": noticia_db.activa
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error interno del servidor: {str(e)}")
 
 
 @router.get("/noticias", response_model=list[NoticiaSchema])

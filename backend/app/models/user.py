@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Enum, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Enum, UniqueConstraint, ForeignKey
 from sqlalchemy.sql import func
 from . import Base
 from enum import Enum as PyEnum
@@ -27,17 +27,22 @@ class User(Base):
     username = Column(String(50), nullable=False, index=True)
     email = Column(String(120), nullable=True)  # opcional si no lo usas
     hashed_password = Column(String(255), nullable=False)
-    country = Column(String(50), nullable=True)
+    country = Column(String(50), nullable=True)  # Mantener para compatibilidad
+    id_pais = Column(Integer, ForeignKey("paises.id_pais"), nullable=True)  # Nueva relación
     rol = Column(Enum(RoleEnum), nullable=False, default=RoleEnum.usuario)
     state = Column(Enum(StateUser), default=StateUser.activo, nullable=False)
     creation_date = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     last_activity_date = Column(TIMESTAMP, nullable=True)
     number_followers = Column(Integer, default=0)
     profile_image = Column(String(length=1000000), nullable=True)  # base64
+    
+    # Relaciones
+    pais = relationship("Pais", backref="usuarios")
     comentarios = relationship("Comentario", back_populates="autor")
     foros = relationship("Foro", back_populates="autor")
 
     # La relación se define después de importar Foro
-# Importar Foro y definir la relación al final del archivo para evitar errores de inicialización circular
+# Importar modelos y definir la relación al final del archivo para evitar errores de inicialización circular
 from .foro import Foro
+from .paises import Pais
 User.foros = relationship("Foro", back_populates="autor")

@@ -49,6 +49,11 @@ async def update_user_me(
     current_user.cellphone = payload.cellphone
     current_user.direction = payload.direction
     current_user.country = payload.country
+    
+    # Actualizar el país si se proporciona
+    if payload.id_pais is not None:
+        current_user.id_pais = payload.id_pais
+    
     if payload.profile_image is not None:
         current_user.profile_image = payload.profile_image
         # Actualizar profile_image en todas las noticias del usuario

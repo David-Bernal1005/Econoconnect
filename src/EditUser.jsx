@@ -13,8 +13,10 @@ const EditUser = () => {
     cellphone: "",
     direction: "",
     country: "",
+    id_pais: null,
     profile_image: ""
   });
+  const [paises, setPaises] = useState([]);
   const [preview, setPreview] = useState("");
   // Mostrar preview si ya hay imagen
   useEffect(() => {
@@ -43,24 +45,32 @@ const EditUser = () => {
       setLoading(false);
       return;
     }
-    fetch("http://localhost:8000/api/v1/users/me", {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("No se pudo obtener el usuario");
-        return res.json();
-      })
-      .then((data) => {
+
+    // Cargar datos del usuario y países en paralelo
+    Promise.all([
+      fetch("http://localhost:8000/api/v1/users/me", {
+        headers: { "Authorization": `Bearer ${token}` }
+      }),
+      fetch("http://localhost:8000/api/v1/paises")
+    ])
+      .then(async ([userRes, paisesRes]) => {
+        if (!userRes.ok) throw new Error("No se pudo obtener el usuario");
+        if (!paisesRes.ok) throw new Error("No se pudieron cargar los países");
+        
+        const userData = await userRes.json();
+        const paisesData = await paisesRes.json();
+        
         setFormData({
-          name: data.name || "",
-          lastname: data.lastname || "",
-          email: data.email || "",
-          cellphone: data.cellphone || "",
-          direction: data.direction || "",
-          country: data.country || ""
+          name: userData.name || "",
+          lastname: userData.lastname || "",
+          email: userData.email || "",
+          cellphone: userData.cellphone || "",
+          direction: userData.direction || "",
+          country: userData.country || "",
+          id_pais: userData.id_pais || null,
+          profile_image: userData.profile_image || ""
         });
+        setPaises(paisesData);
         setLoading(false);
       })
       .catch((err) => {
@@ -171,13 +181,19 @@ const EditUser = () => {
         </div>
         <div className="info-row">
           <label className="label">País</label>
-          <input
+          <select
             className="value"
-            type="text"
-            name="country"
-            value={formData.country}
+            name="id_pais"
+            value={formData.id_pais || ""}
             onChange={handleChange}
-          />
+          >
+            <option value="">Seleccionar país...</option>
+            {paises.map((pais) => (
+              <option key={pais.id_pais} value={pais.id_pais}>
+                {pais.nombre} {pais.codigo_telefono && `(${pais.codigo_telefono})`}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="info-button">
           <button type="button" onClick={handleSave}>

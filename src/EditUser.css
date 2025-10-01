@@ -56,6 +56,25 @@ body {
   width: 95%; /* ocupa todo el ancho disponible */
 }
 
+/* Estilos específicos para select */
+.edit-user select.value {
+  cursor: pointer;
+  width: 95%; /* Mismo ancho que los inputs */
+  box-shadow: none; /* Sin sombra */
+}
+
+.edit-user select.value:focus {
+  background: #2b2f2f;
+  box-shadow: 0 0 8px rgba(241, 196, 15, 0.8); /* Solo sombra en focus */
+  outline: none;
+}
+
+.edit-user select.value option {
+  background: #1c2120;
+  color: #fff;
+  padding: 10px;
+}
+
 
 .edit-user .value:focus {
   background: #2b2f2f;
