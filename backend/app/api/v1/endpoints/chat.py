@@ -13,12 +13,7 @@ def get_user_chats(user_id: int, db: Session = Depends(get_db)):
     
     result = []
     for chat in chats:
-        last_msg = {
-            db.query(ChatMensaje)
-            .filter(ChatMensaje.id_chat == chat.id_chat)
-            .order_by(ChatMensaje.fecha_envio.desc())
-            .first()
-        }
+        last_msg = db.query(ChatMensaje).filter(ChatMensaje.id_chat == chat.id_chat).order_by(ChatMensaje.fecha_envio.desc()).first()
         result.append({
             "id_chat": chat.id_chat,
             "nombre": chat.nombre,
