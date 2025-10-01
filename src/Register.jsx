@@ -6,10 +6,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     usua_nombre: "",
     usua_apellido: "",
-    usua_celular: "",
-    usua_direccion: "",
     usua_email: "",
-    usua_pais: "",
     usua_usuario: "",
     usua_password: "",
     usua_rol_fk: "usuario",
@@ -35,6 +32,7 @@ const Register = () => {
           email: formData.usua_email,
           username: formData.usua_usuario,
           password: formData.usua_password,
+          rol: "usuario",
         }),
       });
       if (response.ok) {

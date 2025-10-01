@@ -10,12 +10,12 @@ class RoleEnum(str, Enum):
 class RegisterRequest(BaseModel):
     name: str
     lastname: str
-    cellphone: str
-    direction: str
+    cellphone: str | None = None
+    direction: str | None = None
     username: str
     password: str
-    country: str
-    rol: RoleEnum
+    country: str | None = None
+    rol: RoleEnum = RoleEnum.usuario
     email: EmailStr | None = None
     state: StateUser = StateUser.activo
 
@@ -27,10 +27,10 @@ class UserResponse(BaseModel):
     id_user: int
     name: str
     lastname: str
-    cellphone: str
-    direction: str
+    cellphone: str | None = None 
+    direction: str | None = None
     username: str
-    country: str
+    country: str | None = None
     rol: RoleEnum
     email: EmailStr | None = None 
     state: StateUser

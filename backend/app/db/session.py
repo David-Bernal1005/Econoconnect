@@ -10,7 +10,7 @@ MARIADB_URL = settings.DATABASE_URL or "mysql+pymysql://root:@localhost:3306/eco
 engine = create_engine(MARIADB_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Dependency para FastAPI
+
 def get_db():
     db = SessionLocal()
     try:
