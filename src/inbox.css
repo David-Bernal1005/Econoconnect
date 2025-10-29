@@ -1,0 +1,37 @@
+.inbox-reset *{ margin:0; padding:0; box-sizing:border-box; }
+
+.box{
+  color: #f1c40f;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 15px;
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  background-color: #121826;
+  border-radius: 12px;
+}
+
+.box h2{
+    text-align: center;
+
+}
+
+.chat button {
+  width: 100%;
+  text-align: left;
+  background: #f8f8f8;
+  color: #121826;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.chat button:hover {
+  background: #f1c40f;
+  color: #121826;
+}

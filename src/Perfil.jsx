@@ -54,14 +54,14 @@ const Perfil = () => {
             <span>perfil</span>
           </a>
         </ul>
-        <ul>
+        <ul>git 
           <a href="/">
             <img src="/img/inicio.svg" alt="Inicio" />
             <span>Inicio</span>
           </a>
         </ul>
         <ul>
-          <a href="/chats">
+          <a href="/chat">
             <img src="/img/chats.svg" alt="Chats" />
             <span>Chats</span>
           </a>

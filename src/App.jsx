@@ -15,7 +15,7 @@ import MisNoticias from "./MisNoticias";
 import Creaciones from "./Creaciones";
 import Perfil from "./Perfil";
 import Graficas from "./Graficas"; 
-import Inbox from "./Inbox";
+import Inbox from "./inbox";
 import ChatRoomWS from "./ChatRoomWS";
 import EditUser from "./EditUser";
 
@@ -127,15 +127,27 @@ const App = () => {
         <Route
           path="/chat"
           element={
-            !selectedChat ? (
-              <Inbox userId={userId} onSelectChat={setSelectedChat} />
-            ) : (
-              <ChatRoomWS
-                chatId={selectedChat}
-                userId={userId}
-                onBack={() => setSelectedChat(null)}
-              />
-            )
+            <div className="chat-layout">
+              <aside className="chat-menu">
+                <Menu />
+              </aside>
+
+              <aside className="chat-inbox">
+                <Inbox userId={userId} onSelectChat={setSelectedChat} />
+              </aside>
+
+              <main className="chat-area">
+                {selectedChat ? (
+                  <ChatRoomWS
+                    chatId={selectedChat}
+                    userId={userId}
+                    onBack={() => setSelectedChat(null)}
+                  />
+                ) : (
+                  <div className="empty-chat">Selecciona un chat para empezar</div>
+                )}
+              </main>
+            </div>
           }
         />
 

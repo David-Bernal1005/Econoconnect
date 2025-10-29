@@ -40,3 +40,49 @@
   color: #888;
 }
  */
+.chat-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #1c2120;
+}
+
+/* Panel izquierdo (lista de chats) */
+.box {
+  width: 280px;
+  background-color: #121826;
+  border-right: 2px solid #0f1118;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  color: #f1c40f;
+}
+
+/* Panel derecho (zona del chat) */
+.chat-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f1118;
+  color: white;
+}
+
+/* Mensaje cuando no hay chat seleccionado */
+.empty-chat {
+  color: #777;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+
+.chatroom {
+  width: 90%;
+  height: 90%;
+  background-color: #1c1f2e;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
