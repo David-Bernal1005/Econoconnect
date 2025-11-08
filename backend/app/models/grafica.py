@@ -7,11 +7,12 @@ class Grafica(Base):
     __tablename__ = "grafica"
 
     id_grafica = Column(Integer, primary_key=True, autoincrement=True)
-    titulo = Column(String(200))
+    titulo = Column(String(200), nullable=False)
     descripcion = Column(Text)
     tipo_grafica = Column(String(50))
     autor_id = Column(Integer, ForeignKey("users.id_user"))
     estado = Column(Enum("activa", "inactiva", name="estado_grafica"), default="activa")
     fecha_creacion = Column(TIMESTAMP, server_default=func.now())
-    foro = relationship("Foro", back_populates="grafica", uselist=False)
 
+    # Relación con foros (uno a muchos)
+    foros = relationship("Foro", back_populates="grafica")

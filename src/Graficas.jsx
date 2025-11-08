@@ -3,17 +3,6 @@ import Menu from "./Menu";
 import {LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer,} from "recharts";
 import "./graficas.css";
 
-const data = [
-  { year: "2018", cop_usd: 2976.5, cop_eur: 3675.59 },
-  { year: "2019", cop_usd: 3357.6, cop_eur: 3788.65 },
-  { year: "2020", cop_usd: 3688.67, cop_eur: 4183.67 },
-  { year: "2021", cop_usd: 3830.49, cop_eur: 4392.5 },
-  { year: "2022", cop_usd: 4392.5, cop_eur: 4392.5 },
-  { year: "2023", cop_usd: 3977.57, cop_eur: 4275.26 },
-  { year: "2024", cop_usd: 4081.12, cop_eur: 4409.81 },
-  { year: "2025", cop_usd: 3874.63, cop_eur: 4426.37 },
-];
-
 function ForoWS({ foroId = 1 }) {
   const [comentarios, setComentarios] = useState([]);
   const [nuevoComentario, setNuevoComentario] = useState("");
@@ -24,18 +13,49 @@ function ForoWS({ foroId = 1 }) {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    socketRef.current = new WebSocket(`ws://localhost:8000/ws/foro/${foroId}`);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Necesitas iniciar sesión para participar en el foro");
+      return;
+    }
 
-    socketRef.current.onmessage = (event) => {
+    const wsUrl = `ws://localhost:8000/ws/foro/${foroId}?token=${token}`;
+    console.log("Intentando conectar a:", wsUrl);
+    const ws = new WebSocket(wsUrl);
+    socketRef.current = ws;
+
+    ws.onopen = () => {
+      console.log("Conexión WebSocket establecida");
+      setError("");
+    };
+
+    ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
+      if (msg.error) {
+        setError(msg.error);
+        return;
+      }
       setComentarios((prev) => [...prev, msg]);
+      setError("");
     };
 
-    socketRef.current.onclose = () => {
-      console.log("Conexión WebSocket cerrada");
+    ws.onclose = (event) => {
+      console.log("Conexión WebSocket cerrada", event.code);
+      if (event.code === 1008) {
+        setError("Necesitas iniciar sesión para participar en el foro");
+      }
     };
 
-    return () => socketRef.current.close();
+    ws.onerror = (error) => {
+      console.error("Error en WebSocket:", error);
+      setError("Error de conexión con el foro");
+    };
+
+    return () => {
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.close();
+      }
+    };
   }, [foroId]);
 
   const handleSubmit = (e) => {
@@ -50,7 +70,6 @@ function ForoWS({ foroId = 1 }) {
     if (!nuevoComentario.trim()) return;
 
     const mensaje = {
-      id_user: parseInt(userId),
       contenido: nuevoComentario.trim(),
     };
 
@@ -67,8 +86,9 @@ function ForoWS({ foroId = 1 }) {
           <p className="sin-comentarios">Aún no hay comentarios.</p>
         )}
         {comentarios.map((c, index) => (
-          <div key={index} className="comentario">
-            <strong>Usuario {c.id_user}:</strong> {c.contenido}
+          <div key={c.id_comentario || index} className="comentario">
+            <strong>{c.username || `Usuario ${c.id_user}`}:</strong> {c.contenido}
+            {c.fecha_creacion && <span className="fecha">{new Date(c.fecha_creacion).toLocaleString()}</span>}
           </div>
         ))}
       </div>
@@ -89,6 +109,29 @@ function ForoWS({ foroId = 1 }) {
 }
 
 export default function Graficas() {
+  const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/v1/graficas");
+        if (!res.ok) throw new Error('Network response was not ok');
+        const json = await res.json();
+        // Asegurar formato: [{ year, cop_usd, cop_eur }, ...]
+        setChartData(json.map((r) => ({ year: r.year, cop_usd: r.cop_usd, cop_eur: r.cop_eur })));
+      } catch (e) {
+        console.warn('No se pudo cargar datos reales de graficas', e);
+        setError('No se pudo obtener datos reales de tasas.');
+        setChartData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="graficas-page">
       <Menu />
@@ -114,8 +157,14 @@ export default function Graficas() {
 
         <div className="graficas-main">
           <div className="chart-container">
+            {loading && <p>Cargando datos de tasas...</p>}
+            {!loading && chartData.length === 0 && (
+              <div className="sin-datos" style={{ color: '#f87171' }}>
+                <p>{error || 'No hay datos disponibles para mostrar.'}</p>
+              </div>
+            )}
             <ResponsiveContainer width="100%" height={380}>
-              <LineChart data={data}>
+              <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#2b2b2b" />
                 <XAxis dataKey="year" stroke="#9ca3af" />
                 <YAxis stroke="#9ca3af" />
