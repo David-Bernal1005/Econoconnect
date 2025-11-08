@@ -21,6 +21,7 @@ import EditUser from "./EditUser";
 
 
 
+
 import "./app.css";
 
 const App = () => {
@@ -107,6 +108,7 @@ const App = () => {
                 <Search noticias={noticias} onSearch={handleSearch} />
                 <section className="content-section">
                   {!searching && <Carousel />}
+               
                 </section>
               </div>
               <Bienvenida name={nombreUsuario} onLogout={handleLogout} />
