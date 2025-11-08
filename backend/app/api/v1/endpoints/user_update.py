@@ -66,3 +66,9 @@ async def update_user_me(
         db.commit()
     db.refresh(current_user)
     return current_user
+
+
+@router.get("/me", response_model=UserResponse)
+async def read_user_me(current_user: User = Depends(get_current_user)):
+    """Obtener datos del usuario autenticado"""
+    return current_user
