@@ -45,6 +45,90 @@
   margin-bottom: 12px;
 }
 
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #2f2f31;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.create-group-button {
+  background: #f1c40f;
+  color: #222;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.create-group-button:hover {
+  background: #f39c12;
+}
+
+.create-group-form {
+  background: #2f2f31;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.create-group-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.create-group-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.create-group-form input,
+.create-group-form textarea,
+.create-group-form select {
+  background: #3b3b3d;
+  border: 1px solid #4a4a4c;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.create-group-form textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.create-group-form select {
+  cursor: pointer;
+}
+
+.create-group-form select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.create-group-submit {
+  background: #f1c40f;
+  color: #222;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.create-group-submit:hover {
+  background: #f39c12;
+}
+
 .inbox-list-card {
   background: #2f2f31;
   border-radius: 10px;

@@ -54,7 +54,9 @@ const Perfil = () => {
             <span>perfil</span>
           </a>
         </ul>
-        <ul>
+
+        <ul> 
+      
           <a href="/">
             <img src="/img/inicio.svg" alt="Inicio" />
             <span>Inicio</span>
