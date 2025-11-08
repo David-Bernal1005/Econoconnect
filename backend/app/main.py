@@ -16,6 +16,7 @@ from app.api.v1.endpoints import (
 )
 
 
+
 app = FastAPI(title="Econoconnect")
 
 # Endpoint para listar todos los endpoints registrados
