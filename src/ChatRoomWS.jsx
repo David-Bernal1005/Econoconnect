@@ -5,8 +5,17 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
   const [messages, setMessages] = useState([]);
   const [content, setContent] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [groupForm, setGroupForm] = useState({
+    nombre: '',
+    descripcion: '',
+    visibilidad: 'publico'
+  });
   const socketRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+
+  const API_BASE = 'http://127.0.0.1:8000';
 
   const connect = useCallback(() => {
     try {
@@ -14,7 +23,7 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
         return; // Ya está conectado
       }
       
-      socketRef.current = new WebSocket(`ws://localhost:8000/ws/chat/${chatId}`);
+  socketRef.current = new WebSocket(`${API_BASE.replace('http', 'ws')}/ws/chat/${chatId}`);
 
       socketRef.current.onopen = () => {
         console.log('WebSocket Connected');
@@ -54,6 +63,7 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
 
   useEffect(() => {
     connect();
+    checkAdminStatus();
 
     return () => {
       if (reconnectTimeoutRef.current) {
@@ -64,6 +74,57 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
       }
     };
   }, [chatId, connect]);
+
+  const checkAdminStatus = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE}/api/v1/user/roles`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const data = await response.json();
+    setIsAdmin(data.rol === 'administrador');
+  } catch (error) {
+    console.error('Error al verificar rol:', error);
+  }
+  };
+
+  const handleCreateGroup = async (e) => {
+    e.preventDefault();
+    try {
+        const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE}/api/v1/grupos/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(groupForm)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Error al crear el grupo');
+        }
+
+        const nuevoGrupo = await response.json();
+        setShowCreateGroup(false);
+        setGroupForm({
+            nombre: '',
+            descripcion: '',
+            visibilidad: 'publico'
+        });
+        
+        // Aquí puedes añadir lógica para cambiar al nuevo grupo
+        if (typeof onBack === 'function') {
+            onBack(); // Para actualizar la lista de chats
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(error.message);
+    }
+  };
 
 
   const handleSend = () => {
@@ -88,8 +149,52 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
 
 
       <div className="chatroom-panel">
-        <button className="back-button" onClick={onBack}>&larr;</button>
-        <h2 className="chatroom-title">Chat {chatId}</h2>
+        <div className="chat-header">
+          <button className="back-button" onClick={onBack}>&larr;</button>
+          <h2 className="chatroom-title">Chat {chatId}</h2>
+          <button 
+            className="create-group-button" 
+            onClick={() => setShowCreateGroup(!showCreateGroup)}
+          >
+            {showCreateGroup ? 'Cancelar' : 'Crear Grupo'}
+          </button>
+        </div>
+
+        {showCreateGroup && (
+          <div className="create-group-form">
+            <form onSubmit={handleCreateGroup}>
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Nombre del grupo"
+                  value={groupForm.nombre}
+                  onChange={(e) => setGroupForm({...groupForm, nombre: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <textarea
+                  placeholder="Descripción del grupo"
+                  value={groupForm.descripcion}
+                  onChange={(e) => setGroupForm({...groupForm, descripcion: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <select
+                  value={groupForm.visibilidad}
+                  onChange={(e) => setGroupForm({...groupForm, visibilidad: e.target.value})}
+                  disabled={!isAdmin}
+                >
+                  <option value="publico">Público</option>
+                  {isAdmin && <option value="privado">Privado</option>}
+                </select>
+              </div>
+              <button type="submit" className="create-group-submit">
+                Crear Grupo
+              </button>
+            </form>
+          </div>
+        )}
         <div className="messages-area">
           {messages.length === 0 ? (
             <div className="empty-state">No hay mensajes todavía</div>
