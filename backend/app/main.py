@@ -12,7 +12,7 @@ from app.api.v1.endpoints import (
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from app.api.v1.endpoints import (
     auth, noticias, publicaciones, graficas, user, user_update,
-    chat, chat_ws, etiquetas, paises, foro_ws, chatmiembros
+    chat, chat_ws, etiquetas, paises, foro_ws, chatmiembros, seguidores
 )
 
 
@@ -47,3 +47,4 @@ app.include_router(user.router, prefix="/api/v1")
 app.include_router(user_update.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(etiquetas.router, prefix="/api/v1")
 app.include_router(paises.router, prefix="/api/v1", tags=["paises"])
+app.include_router(seguidores.router, prefix="/api/v1")  # Agrega el router de seguidores
