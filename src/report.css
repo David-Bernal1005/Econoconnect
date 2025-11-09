@@ -1,0 +1,184 @@
+/* General */
+body {
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 50;  /* superior a todo lo demás */
+  cursor: pointer;
+}
+
+.post-container .menu {
+  font-size: 14px;
+  color: #FFD700;  /* visible sobre el fondo */
+  line-height: 1;
+  user-select: none;
+}
+
+
+
+/* Post */
+.post {
+  padding: 20px;
+  margin: 10px auto;
+  width: 350px;
+  border-radius: 12px;
+  position: relative; /* ya basta con esto */
+}
+
+
+/* Menú de tres puntos */
+.menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #FFD700;
+  z-index: 20; /* Asegura que esté por encima */
+}
+
+/* Opciones del menú */
+.menu-options {
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 30;
+  border: 1px solid #FFD700;
+}
+
+.menu-options button {
+  display: block;
+  background: none;
+  border: none;
+  color: #FFD700;
+  padding: 12px 15px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.menu-options button:hover {
+  background: #FFD700;
+  color: #000;
+}
+
+/* Modal */
+.reportar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 125%;
+  background: rgba(0,0,0,0.8);
+  display: flex;           /* Hace que se muestre y permita centrar el contenido */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor de opciones inicial */
+.opciones {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 15px;
+  width: 420px;
+  max-height: 80%;
+  border: 1px solid #FFD700;
+  overflow-y: auto; /* Permite scroll si hay muchas opciones */
+}
+
+/* Contenedor de paso 2 */
+.mensaje {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 15px;
+  width: 420px;
+  max-height: 80%;
+  border: 1px solid #FFD700;
+  overflow-y: auto;
+}
+
+/* Títulos */
+h2 {
+  margin-top: 0;
+  color: #FFD700;
+}
+
+/* Opciones de radio */
+.option {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.option input {
+  margin-right: 10px;
+  accent-color: #FFD700;
+}
+
+/* Botones */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  margin-top: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-disabled {
+  background: #333;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #FFD700;
+  color: #000;
+}
+
+.btn-primary:hover {
+  background: #e6c200;
+}
+
+/* Textarea */
+textarea {
+  width: 97%;
+  height: 100px;
+  border-radius: 8px;
+  border: none;
+  padding: 8px;
+  background: #2a2a2a;
+  color: white;
+  resize: none;
+  outline: none;
+  margin-top: 10px;
+}
+
+/* Botón de volver */
+.back {
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: inline-block;
+  color: #FFD700;
+}
+
+.back:hover {
+  text-decoration: underline;
+}

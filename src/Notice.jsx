@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReportPost from "./Report";
 import './notice.css';
 
 
@@ -50,7 +51,8 @@ const Notice = ({ noticia }) => {
     // Eliminado useEffect y estado, solo lógica directa arriba
 
   return (
-    <div className="news-container">
+    <div className="news-container" style={{ position: 'relative' }}>
+    <ReportPost />
       <div className="sidebar">
         {/* Mostrar etiquetas si existen y no están vacías */}
         {Array.isArray(noticia.etiquetas) && noticia.etiquetas.length > 0
