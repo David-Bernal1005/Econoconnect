@@ -167,39 +167,22 @@ export default function Inbox({ userId, onSelectChat }) {
         body: JSON.stringify(dataToSend)
       });
       if (!res.ok) {
-<<<<<<< HEAD
-        let detail = "Error al crear el chat/grupo";
-        try { const err = await res.json(); detail = err.detail || detail; } catch {}
-        throw new Error(detail);
-=======
-        let errorMessage;
+        // Unificar manejo de errores: intentar parsear detalle enriquecido, fallback simple
+        let message = "Error al crear el chat/grupo";
         try {
           const err = await res.json();
-          console.error('Error del servidor:', {
+          console.error('Error del servidor al crear grupo:', {
             status: res.status,
             statusText: res.statusText,
-            error: err,
-            headers: Object.fromEntries(res.headers.entries()),
-            url: res.url,
-            type: res.type
+            cuerpo: err,
+            headers: Object.fromEntries(res.headers.entries())
           });
-          
-          // Mostrar información más detallada del error
-          console.error('Detalles completos de la respuesta:', {
-            status: res.status,
-            ok: res.ok,
-            redirected: res.redirected,
-            type: res.type,
-            url: res.url
-          });
-          
-          errorMessage = err.detail || err.message || `Error ${res.status}: No autorizado - ${JSON.stringify(err)}`;
-        } catch (e) {
-          console.error('Error al parsear respuesta:', e);
-          errorMessage = `Error ${res.status}: ${res.statusText}`;
+          message = err.detail || err.message || message;
+        } catch (parseErr) {
+          console.error('Error parseando respuesta de error:', parseErr);
+          message = `Error ${res.status}: ${res.statusText}`;
         }
-        throw new Error(errorMessage);
->>>>>>> b461459eb0b27e8e778d23d819395e7701e53c06
+        throw new Error(message);
       }
       const responseData = await res.json();
       console.log('Respuesta exitosa:', responseData);
@@ -282,20 +265,18 @@ export default function Inbox({ userId, onSelectChat }) {
               <label className="form-label">Visibilidad</label>
               <select
                 value={groupForm.visibilidad}
-<<<<<<< HEAD
-                onChange={(e) => handleChange("visibilidad", e.target.value)}
-=======
                 onChange={(e) => {
-                  console.log('Cambiando visibilidad a:', e.target.value);
-                  setGroupForm({ ...groupForm, visibilidad: e.target.value });
+                  handleChange("visibilidad", e.target.value);
+                  console.log('Visibilidad seleccionada:', e.target.value);
                 }}
->>>>>>> b461459eb0b27e8e778d23d819395e7701e53c06
                 disabled={!isAdmin}
               >
                 <option value="publico">Público</option>
                 {isAdmin && <option value="privado">Privado</option>}
               </select>
-<<<<<<< HEAD
+              <div style={{ marginTop: 4, fontSize: 12, color: 'gray' }}>
+                Estado actual: {isAdmin ? 'Administrador' : 'Usuario estándar'}
+              </div>
               {!isAdmin && (
                 <small className="helper-text">Solo administradores pueden crear grupos privados</small>
               )}
@@ -313,12 +294,6 @@ export default function Inbox({ userId, onSelectChat }) {
                   Corrige los campos marcados
                 </small>
               )}
-=======
-              <div style={{ marginTop: '4px', fontSize: '12px', color: 'gray' }}>
-                Estado actual: {isAdmin ? 'Eres administrador' : 'No eres administrador'}
-              </div>
-              {!isAdmin && <small style={{ color: "gray", marginTop: 4 }}>Solo administradores pueden crear grupos privados</small>}
->>>>>>> b461459eb0b27e8e778d23d819395e7701e53c06
             </div>
           </form>
         </div>
