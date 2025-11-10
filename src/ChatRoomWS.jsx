@@ -11,6 +11,7 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
   const [connectionError, setConnectionError] = useState("");
   const socketRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const processedMessagesRef = useRef(new Set());
 
   const API_BASE = 'http://127.0.0.1:8000';
 
