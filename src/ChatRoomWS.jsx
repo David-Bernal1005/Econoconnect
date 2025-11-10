@@ -5,13 +5,10 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
   const [messages, setMessages] = useState([]);
   const [content, setContent] = useState("");
   const [isConnected, setIsConnected] = useState(false);
-  const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [groupForm, setGroupForm] = useState({
-    nombre: '',
-    descripcion: '',
-    visibilidad: 'publico'
-  });
+  const [addMemberUserId, setAddMemberUserId] = useState("");
+  const [isAddingMember, setIsAddingMember] = useState(false);
+  const [connectionError, setConnectionError] = useState("");
   const socketRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
 
@@ -23,11 +20,14 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
         return; // Ya está conectado
       }
       
-  socketRef.current = new WebSocket(`${API_BASE.replace('http', 'ws')}/ws/chat/${chatId}`);
+      const wsUrl = `${API_BASE.replace('http', 'ws')}/ws/chat/${chatId}`;
+      console.log('Intentando conectar a:', wsUrl);
+      socketRef.current = new WebSocket(wsUrl);
 
       socketRef.current.onopen = () => {
         console.log('WebSocket Connected');
         setIsConnected(true);
+        setConnectionError("");
         // Limpiar cualquier timeout de reconexión pendiente
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
@@ -43,6 +43,7 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
       socketRef.current.onerror = (error) => {
         console.error('WebSocket Error:', error);
         setIsConnected(false);
+        setConnectionError("Error de conexión WebSocket. Verifica que el servidor esté corriendo en http://127.0.0.1:8000");
       };
 
       socketRef.current.onclose = (event) => {
@@ -58,6 +59,7 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
     } catch (error) {
       console.error('Error al crear WebSocket:', error);
       setIsConnected(false);
+      setConnectionError("Error al crear la conexión WebSocket");
     }
   }, [chatId]);
 
@@ -76,56 +78,78 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
   }, [chatId, connect]);
 
   const checkAdminStatus = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/api/v1/user/roles`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    const data = await response.json();
-    setIsAdmin(data.rol === 'administrador');
-  } catch (error) {
-    console.error('Error al verificar rol:', error);
-  }
-  };
-
-  const handleCreateGroup = async (e) => {
-    e.preventDefault();
     try {
-        const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/api/v1/grupos/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(groupForm)
-        });
+      const token = localStorage.getItem('token');
+      console.log("Token en localStorage:", token ? "Existe" : "No existe");
+      console.log("Token valor:", token);
+      
+      if (!token) {
+        console.warn("No hay token en localStorage");
+        setIsAdmin(false);
+        return;
+      }
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Error al crear el grupo');
+      const response = await fetch(`${API_BASE}/api/v1/user/roles`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
+      });
 
-        const nuevoGrupo = await response.json();
-        setShowCreateGroup(false);
-        setGroupForm({
-            nombre: '',
-            descripcion: '',
-            visibilidad: 'publico'
-        });
-        
-        // Aquí puedes añadir lógica para cambiar al nuevo grupo
-        if (typeof onBack === 'function') {
-            onBack(); // Para actualizar la lista de chats
-        }
+      console.log("Response status:", response.status);
+      
+      if (!response.ok) {
+        console.error("Error al obtener rol, status:", response.status);
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Error detail:", errorData);
+        setIsAdmin(false);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Rol data:", data);
+      
+      const raw = (data?.rol ?? data?.role ?? (Array.isArray(data?.roles) ? data.roles[0] : ""))
+        ?.toString()
+        .toLowerCase();
+      console.log("Rol normalizado:", raw);
+      
+      setIsAdmin(raw === 'administrador' || raw === 'admin');
     } catch (error) {
-        console.error('Error:', error);
-        alert(error.message);
+      console.error('Error al verificar rol:', error);
+      setIsAdmin(false);
     }
   };
 
+  const handleAddMember = async (e) => {
+    e.preventDefault();
+    if (!addMemberUserId) return;
+    try {
+      setIsAddingMember(true);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE}/api/v1/chatmiembros/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          id_chat: Number(chatId),
+          id_user: Number(addMemberUserId),
+          rol_chat: 'miembro'
+        })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'No se pudo agregar el usuario al grupo');
+      }
+      setAddMemberUserId("");
+      alert('Usuario agregado al grupo');
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsAddingMember(false);
+    }
+  };
 
   const handleSend = () => {
     if (!content.trim() || !isConnected) return;
@@ -144,57 +168,24 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
       connect();
     }
   };
+
   return (
     <>
-
-
       <div className="chatroom-panel">
         <div className="chat-header">
           <button className="back-button" onClick={onBack}>&larr;</button>
           <h2 className="chatroom-title">Chat {chatId}</h2>
-          <button 
-            className="create-group-button" 
-            onClick={() => setShowCreateGroup(!showCreateGroup)}
-          >
-            {showCreateGroup ? 'Cancelar' : 'Crear Grupo'}
-          </button>
+          <div style={{ fontSize: 12, color: isConnected ? 'green' : 'red' }}>
+            {isConnected ? '🟢 Conectado' : '🔴 Desconectado'}
+          </div>
         </div>
 
-        {showCreateGroup && (
-          <div className="create-group-form">
-            <form onSubmit={handleCreateGroup}>
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Nombre del grupo"
-                  value={groupForm.nombre}
-                  onChange={(e) => setGroupForm({...groupForm, nombre: e.target.value})}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <textarea
-                  placeholder="Descripción del grupo"
-                  value={groupForm.descripcion}
-                  onChange={(e) => setGroupForm({...groupForm, descripcion: e.target.value})}
-                />
-              </div>
-              <div className="form-group">
-                <select
-                  value={groupForm.visibilidad}
-                  onChange={(e) => setGroupForm({...groupForm, visibilidad: e.target.value})}
-                  disabled={!isAdmin}
-                >
-                  <option value="publico">Público</option>
-                  {isAdmin && <option value="privado">Privado</option>}
-                </select>
-              </div>
-              <button type="submit" className="create-group-submit">
-                Crear Grupo
-              </button>
-            </form>
+        {connectionError && (
+          <div style={{ padding: 8, backgroundColor: '#ffcccc', color: '#cc0000', marginBottom: 8, borderRadius: 4 }}>
+            {connectionError}
           </div>
         )}
+
         <div className="messages-area">
           {messages.length === 0 ? (
             <div className="empty-state">No hay mensajes todavía</div>
@@ -225,11 +216,30 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
             }}
             placeholder="Enviar un mensaje..."
             aria-label="Escribe un mensaje"
+            disabled={!isConnected}
           />
-          <button className="chat-send" onClick={handleSend} title="Enviar">
+          <button className="chat-send" onClick={handleSend} title="Enviar" disabled={!isConnected}>
             <img src="/img/graficos.svg" alt="send" />
           </button>
         </div>
+
+        {isAdmin && (
+          <div className="add-member-panel" style={{ marginTop: 12, padding: 8, backgroundColor: '#f0f0f0', borderRadius: 4 }}>
+            <form onSubmit={handleAddMember} style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="number"
+                min="1"
+                placeholder="ID de usuario a agregar"
+                value={addMemberUserId}
+                onChange={(e) => setAddMemberUserId(e.target.value)}
+                required
+              />
+              <button type="submit" disabled={isAddingMember}>
+                {isAddingMember ? 'Agregando...' : 'Agregar miembro'}
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </>
   );
