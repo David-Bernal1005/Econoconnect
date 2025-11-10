@@ -49,6 +49,11 @@ export default function ChatRoomWS({ chat, userId, onBack }) {
         if (payload?.type === 'history' && Array.isArray(payload.messages)) {
           // Reemplazar historial completo sólo si aún no hay mensajes (primera carga)
           setMessages(payload.messages);
+          // Registrar ids para evitar duplicados posteriores
+          payload.messages.forEach(m => {
+            const idKey = m.id_mensaje || m.client_id || `${m.id_user}-${m.fecha_envio}`;
+            processedMessagesRef.current.add(idKey);
+          });
           return;
         }
         if (payload?.type === 'message') {
@@ -58,9 +63,16 @@ export default function ChatRoomWS({ chat, userId, onBack }) {
               if (idx !== -1) {
                 const copy = prev.slice();
                 copy[idx] = { ...payload, pending: false };
+                const idKey = payload.id_mensaje || payload.client_id;
+                processedMessagesRef.current.add(idKey);
                 return copy;
               }
             }
+            const idKey = payload.id_mensaje || payload.client_id;
+            if (processedMessagesRef.current.has(idKey)) {
+              return prev; // ignorar duplicado
+            }
+            processedMessagesRef.current.add(idKey);
             return [...prev, { ...payload, pending: false }];
           });
         }
@@ -252,9 +264,9 @@ export default function ChatRoomWS({ chat, userId, onBack }) {
         throw new Error(err.detail || 'No se pudo agregar el usuario al grupo');
       }
       setAddMemberUserId("");
-      alert('Usuario agregado al grupo');
+      window.showToast?.('Usuario agregado al grupo ✅','success');
     } catch (err) {
-      alert(err.message);
+      window.showToast?.(err.message || 'Error al agregar usuario','error');
     } finally {
       setIsAddingMember(false);
     }
@@ -285,6 +297,7 @@ export default function ChatRoomWS({ chat, userId, onBack }) {
       setContent("");
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
+      window.showToast?.('Error enviando mensaje','error');
       connect();
     }
   };

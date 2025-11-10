@@ -18,6 +18,7 @@ import Graficas from "./Graficas";
 import Inbox from "./inbox";
 import ChatRoomWS from "./ChatRoomWS";
 import EditUser from "./EditUser";
+import ToastContainer from "./components/ToastContainer";
 
 
 
@@ -109,6 +110,7 @@ const App = () => {
 
   return (
     <Router>
+      <ToastContainer />
       <GlobalBrand />
       <LoginButton />
       <Routes>

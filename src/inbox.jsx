@@ -191,7 +191,7 @@ export default function Inbox({ userId, onSelectChat }) {
       setTouched({});
       refreshChats();
     } catch (err) {
-      alert(err.message);
+      window.showToast?.(err.message || 'Error al crear el grupo','error');
     } finally {
       setSubmitting(false);
     }

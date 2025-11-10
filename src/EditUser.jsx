@@ -91,7 +91,7 @@ const EditUser = () => {
   const handleSave = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("No autenticado");
+      window.showToast?.("No autenticado", 'error');
       return;
     }
     try {
@@ -105,10 +105,10 @@ const EditUser = () => {
       });
       if (!res.ok) throw new Error("No se pudo actualizar el usuario");
       const data = await res.json();
-      alert("Usuario actualizado correctamente");
+  window.showToast?.("Usuario actualizado correctamente", 'success');
       navigate("/perfil");
     } catch (err) {
-      alert("Error al actualizar: " + err.message);
+      window.showToast?.("Error al actualizar: " + err.message, 'error');
     }
   };
 

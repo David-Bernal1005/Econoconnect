@@ -95,7 +95,7 @@ const Perfil = () => {
         throw new Error(data.detail || "Error al seguir usuario");
       }
 
-      alert("Ahora sigues a este usuario ✅");
+  window.showToast?.("Ahora sigues a este usuario ✅", 'success');
 
       // 🔁 Actualizar contador de seguidores si el usuario actual es seguido
       if (userId === user.id_user) {
@@ -103,7 +103,7 @@ const Perfil = () => {
       }
 
     } catch (err) {
-      alert(err.message);
+      window.showToast?.(err.message || 'Error al seguir usuario', 'error');
     }
   };
 
@@ -124,14 +124,14 @@ const Perfil = () => {
         throw new Error(data.detail || "Error al dejar de seguir usuario");
       }
 
-      alert("Has dejado de seguir al usuario ❌");
+  window.showToast?.("Has dejado de seguir al usuario ❌", 'info');
 
       if (userId === user.id_user) {
         setFollowersCount((prev) => Math.max(prev - 1, 0));
       }
 
     } catch (err) {
-      alert(err.message);
+      window.showToast?.(err.message || 'Error al dejar de seguir', 'error');
     }
   };
 
