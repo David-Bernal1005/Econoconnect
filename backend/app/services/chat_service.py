@@ -1,17 +1,23 @@
 from sqlalchemy.orm import Session
 from ..models.chat import Chat
 from ..models.user import User
+from ..models.chatmiembro import ChatMiembro
 from ..schemas.chat import ChatCreate
 from ..core.security import get_current_user
 from fastapi import HTTPException
 
 def create_chat_group(db: Session, chat: ChatCreate, current_user: User):
     # Check if the user has permission to create this type of chat
-    if chat.visibilidad == "privado" and not any(rol.nombre == "administrador" for rol in current_user.roles):
-        raise HTTPException(
-            status_code=403,
-            detail="Solo los administradores pueden crear grupos privados"
-        )
+    # Normalizar y aceptar varias formas ("administrador", "RoleEnum.administrador", etc.)
+    if chat.visibilidad == "privado":
+        rol_str = str(current_user.rol).lower()
+        # debug log (se puede cambiar a logging)
+        print(f"[chat_service] current_user.rol={rol_str}")
+        if "administrador" not in rol_str:
+            raise HTTPException(
+                status_code=403,
+                detail="Solo los administradores pueden crear grupos privados"
+            )
     
     db_chat = Chat(
         nombre=chat.nombre,

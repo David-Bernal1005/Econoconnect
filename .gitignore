@@ -3,6 +3,7 @@
 venv/
 __pycache__/
 *.pyc
+ec/
 
 # Logs
 logs
@@ -28,3 +29,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+

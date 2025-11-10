@@ -55,7 +55,12 @@ function ForoWS({ foroId = 1 }) {
         setError(msg.error);
         return;
       }
-      setComentarios((prev) => [...prev, msg]);
+      // Verificar si el mensaje ya existe por id para evitar duplicados
+      setComentarios((prev) => {
+        const exists = prev.some(c => c.id_comentario === msg.id_comentario);
+        if (exists) return prev;
+        return [...prev, msg];
+      });
       setError("");
     };
 
@@ -78,7 +83,7 @@ function ForoWS({ foroId = 1 }) {
     };
   }, [foroId, token]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token || !userId) {
       setError("Solo puedes comentar si has iniciado sesión.");
@@ -88,79 +93,76 @@ function ForoWS({ foroId = 1 }) {
 
     const mensaje = { contenido: nuevoComentario.trim() };
 
-    const sendViaRest = async () => {
-      try {
-        const res = await fetch(`http://localhost:8000/ws/foro/${foroId}/comentarios`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(mensaje)
-        });
-        if (!res.ok) {
-          const text = await res.text();
-          setError('Error guardando comentario: ' + (text || res.status));
-          return null;
-        }
-        const data = await res.json();
-        // Añadir el comentario retornado al estado
-        setComentarios(prev => [...prev, data]);
-        return data;
-      } catch (err) {
-        console.error('Error enviando comentario por REST', err);
-        setError('Error guardando comentario');
-        return null;
-      }
-    };
-
-    // Intentar enviar por WebSocket si está abierto
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      try {
+    try {
+      // Si el WebSocket está abierto, usar WebSocket
+      if (socketRef.current?.readyState === WebSocket.OPEN) {
         socketRef.current.send(JSON.stringify(mensaje));
-        // Limpiar input y confiar en el broadcast para agregar el comentario
         setNuevoComentario('');
         setError('');
         return;
-      } catch (err) {
-        console.warn('WS send falló, usando REST fallback', err);
-        sendViaRest().then(saved => { if (saved) setNuevoComentario(''); });
-        return;
       }
-    }
 
-    // Si WS no está disponible, usar REST
-    sendViaRest().then(saved => { if (saved) setNuevoComentario(''); });
+      // Si no hay WebSocket disponible, usar REST como fallback
+      const res = await fetch(`http://localhost:8000/ws/foro/${foroId}/comentarios`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(mensaje)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || res.status);
+      }
+
+      // Limpiar input después de envío exitoso
+      setNuevoComentario('');
+      setError('');
+    } catch (err) {
+      console.error('Error al enviar comentario:', err);
+      setError('Error al enviar el comentario: ' + err.message);
+    }
   };
 
   return (
     <div className="foro-container">
       <h3>Foro de discusión</h3>
-      <div className="comentarios-list">
-        {comentarios.length === 0 && (
-          <p className="sin-comentarios">Aún no hay comentarios.</p>
-        )}
-        {comentarios.map((c, index) => (
-          <div key={c.id_comentario || index} className="comentario">
-            <strong>{c.username || `Usuario ${c.id_user}`}:</strong> {c.contenido}
-            {c.fecha_creacion && (
-              <span className="fecha">{new Date(c.fecha_creacion).toLocaleString()}</span>
-            )}
-          </div>
-        ))}
+      <div className="comentarios-area">
+        <div className="comentarios-list">
+          {comentarios.length === 0 && (
+            <p className="sin-comentarios">Aún no hay comentarios.</p>
+          )}
+          {comentarios.map((c, index) => (
+            <div key={c.id_comentario || index} className="comentario">
+              <div className="comentario-header">
+                <img 
+                  src={c.profile_image || "/img/perfil.svg"} 
+                  alt={c.username || `Usuario ${c.id_user}`} 
+                  className="user-avatar"
+                />
+                <strong>{c.username || `Usuario ${c.id_user}`}</strong>
+              </div>
+              <div className="comentario-content">
+                {c.contenido}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <form onSubmit={handleSubmit} className="comentario-form">
+          <textarea
+            rows={3}
+            value={nuevoComentario}
+            onChange={(e) => setNuevoComentario(e.target.value)}
+            placeholder="Escribe tu comentario..."
+          />
+          <button type="submit">Enviar</button>
+        </form>
+
+        {error && <p style={{ color: "red", marginTop: "8px" }}>{error}</p>}
       </div>
-
-      <form onSubmit={handleSubmit} className="comentario-form">
-        <textarea
-          rows={3}
-          value={nuevoComentario}
-          onChange={(e) => setNuevoComentario(e.target.value)}
-          placeholder="Escribe tu comentario..."
-        />
-        <button type="submit">Enviar</button>
-      </form>
-
-      {error && <p style={{ color: "red", marginTop: "8px" }}>{error}</p>}
     </div>
   );
 }
@@ -220,17 +222,35 @@ export default function Graficas() {
                 <p>{error || 'No hay datos disponibles para mostrar.'}</p>
               </div>
             )}
-            <ResponsiveContainer width="100%" height={380}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#2b2b2b" />
-                <XAxis dataKey="year" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip />
-                <Legend />
+            <ResponsiveContainer width="100%" height={360}>
+              <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                <XAxis 
+                  dataKey="year" 
+                  stroke="#9ca3af"
+                  tick={{ fill: '#9ca3af' }}
+                />
+                <YAxis 
+                  stroke="#9ca3af"
+                  tick={{ fill: '#9ca3af' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#2b2b2b',
+                    border: '1px solid #444',
+                    color: '#fff'
+                  }}
+                />
+                <Legend 
+                  wrapperStyle={{
+                    color: '#9ca3af'
+                  }}
+                />
                 <Line
                   type="monotone"
                   dataKey="cop_usd"
                   stroke="#00c0ff"
+                  strokeWidth={2}
                   dot={{ r: 4 }}
                   name="COP/USD"
                 />
@@ -238,6 +258,7 @@ export default function Graficas() {
                   type="monotone"
                   dataKey="cop_eur"
                   stroke="#f1c40f"
+                  strokeWidth={2}
                   dot={{ r: 4 }}
                   name="COP/EUR"
                 />

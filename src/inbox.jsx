@@ -13,6 +13,8 @@ export default function Inbox({ userId, onSelectChat }) {
     descripcion: "",
     tipo: "grupo",
     visibilidad: "publico",
+    // Agregar cualquier otro campo requerido por el backend
+    creador_id: userId, // Asegurarse de que el ID del creador se envíe
   });
   const maxNameLength = 50;
   const maxDescLength = 300;
@@ -61,11 +63,11 @@ export default function Inbox({ userId, onSelectChat }) {
       })
       .then((data) => {
         console.log("Rol data:", data);
-        const raw = (data?.rol ?? data?.role ?? (Array.isArray(data?.roles) ? data.roles[0] : ""))
-          ?.toString()
-          .toLowerCase();
+        const raw = data?.rol?.toString().toLowerCase() || "";
         console.log("Rol normalizado:", raw);
-        setIsAdmin(raw === "administrador" || raw === "admin");
+        // Verificar cualquier variante que incluya "administrador"
+        setIsAdmin(raw.includes("administrador"));
+        console.log("¿Es admin?:", raw.includes("administrador"));
       })
       .catch((err) => {
         console.error("Error al obtener rol:", err);
@@ -108,20 +110,99 @@ export default function Inbox({ userId, onSelectChat }) {
         return;
       }
       const token = localStorage.getItem("token");
+      
+      if (!token) {
+        throw new Error("No hay token de autenticación");
+      }
+
+      // Validar que solo los administradores puedan crear grupos privados
+      if (groupForm.visibilidad === "privado" && !isAdmin) {
+        throw new Error("Solo los administradores pueden crear grupos privados");
+      }
+
+      // Verificar el estado de autenticación
+      try {
+        // Verificar el rol primero
+        const roleCheck = await fetch(`${API_BASE}/api/v1/user/roles`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const roleData = await roleCheck.json();
+        console.log("Verificación de rol:", roleData);
+      } catch (error) {
+        console.error("Error al verificar rol:", error);
+      }
+
+      // Construir el objeto de datos para enviar
+      const dataToSend = {
+        nombre: groupForm.nombre,
+        descripcion: groupForm.descripcion,
+        visibilidad: groupForm.visibilidad.toLowerCase(),
+        tipo: "grupo"
+      };
+      
+      console.log("Intentando crear grupo con:", {
+        datos: dataToSend,
+        token: token.substring(0, 20) + "...", // Solo mostrar parte del token por seguridad
+        esAdmin: isAdmin
+      });
+
+      // Debug de la información que se enviará
+      console.log('Token:', token);
+      console.log('Datos a enviar:', dataToSend);
+      console.log('Headers:', {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      });
+
       const res = await fetch(`${API_BASE}/api/v1/grupos/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/json",
+          "X-Requested-With": "XMLHttpRequest"
         },
-        body: JSON.stringify(groupForm),
+        body: JSON.stringify(dataToSend)
       });
       if (!res.ok) {
+<<<<<<< HEAD
         let detail = "Error al crear el chat/grupo";
         try { const err = await res.json(); detail = err.detail || detail; } catch {}
         throw new Error(detail);
+=======
+        let errorMessage;
+        try {
+          const err = await res.json();
+          console.error('Error del servidor:', {
+            status: res.status,
+            statusText: res.statusText,
+            error: err,
+            headers: Object.fromEntries(res.headers.entries()),
+            url: res.url,
+            type: res.type
+          });
+          
+          // Mostrar información más detallada del error
+          console.error('Detalles completos de la respuesta:', {
+            status: res.status,
+            ok: res.ok,
+            redirected: res.redirected,
+            type: res.type,
+            url: res.url
+          });
+          
+          errorMessage = err.detail || err.message || `Error ${res.status}: No autorizado - ${JSON.stringify(err)}`;
+        } catch (e) {
+          console.error('Error al parsear respuesta:', e);
+          errorMessage = `Error ${res.status}: ${res.statusText}`;
+        }
+        throw new Error(errorMessage);
+>>>>>>> b461459eb0b27e8e778d23d819395e7701e53c06
       }
-      await res.json();
+      const responseData = await res.json();
+      console.log('Respuesta exitosa:', responseData);
       setShowCreate(false);
       setGroupForm({ nombre: "", descripcion: "", tipo: "grupo", visibilidad: "publico" });
       setTouched({});
@@ -201,12 +282,20 @@ export default function Inbox({ userId, onSelectChat }) {
               <label className="form-label">Visibilidad</label>
               <select
                 value={groupForm.visibilidad}
+<<<<<<< HEAD
                 onChange={(e) => handleChange("visibilidad", e.target.value)}
+=======
+                onChange={(e) => {
+                  console.log('Cambiando visibilidad a:', e.target.value);
+                  setGroupForm({ ...groupForm, visibilidad: e.target.value });
+                }}
+>>>>>>> b461459eb0b27e8e778d23d819395e7701e53c06
                 disabled={!isAdmin}
               >
                 <option value="publico">Público</option>
                 {isAdmin && <option value="privado">Privado</option>}
               </select>
+<<<<<<< HEAD
               {!isAdmin && (
                 <small className="helper-text">Solo administradores pueden crear grupos privados</small>
               )}
@@ -224,6 +313,12 @@ export default function Inbox({ userId, onSelectChat }) {
                   Corrige los campos marcados
                 </small>
               )}
+=======
+              <div style={{ marginTop: '4px', fontSize: '12px', color: 'gray' }}>
+                Estado actual: {isAdmin ? 'Eres administrador' : 'No eres administrador'}
+              </div>
+              {!isAdmin && <small style={{ color: "gray", marginTop: 4 }}>Solo administradores pueden crear grupos privados</small>}
+>>>>>>> b461459eb0b27e8e778d23d819395e7701e53c06
             </div>
           </form>
         </div>

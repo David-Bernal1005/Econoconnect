@@ -40,12 +40,21 @@ def create_group(
     Solo los administradores pueden crear grupos privados.
     Usuarios normales pueden crear grupos públicos.
     """
+    # Debug: imprimir usuario y rol para verificar permisos
+    try:
+        print(f"[endpoint create_group] user={current_user.username} rol={current_user.rol}")
+    except Exception:
+        print(f"[endpoint create_group] current_user info unavailable: {current_user}")
+
     # Verificar si el usuario tiene permisos para crear grupos privados
-    if chat.visibilidad == "privado" and str(current_user.rol) != "administrador":
-        raise HTTPException(
-            status_code=403,
-            detail="Solo los administradores pueden crear grupos privados"
-        )
+    # Aceptar distintos formatos del enum: 'administrador', 'RoleEnum.administrador', etc.
+    if chat.visibilidad == "privado":
+        rol_str = str(current_user.rol).lower()
+        if "administrador" not in rol_str:
+            raise HTTPException(
+                status_code=403,
+                detail="Solo los administradores pueden crear grupos privados"
+            )
     
     db_chat = Chat(
         nombre=chat.nombre,
