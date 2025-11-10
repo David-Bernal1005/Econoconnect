@@ -8,6 +8,7 @@ from app.models.chatmiembro import ChatMiembro
 from app.core.security import get_current_user
 from app.models.user import User
 from app.schemas.chat import ChatCreate, ChatResponse
+from fastapi import Query
 
 router = APIRouter()
 
@@ -85,6 +86,25 @@ def list_public_groups(
         Chat.estado == "activo"
     ).offset(skip).limit(limit).all()
 
+@router.get("/chats/{chat_id}/mensajes")
+def get_chat_messages(
+    chat_id: int,
+    skip: int = 0,
+    limit: int = Query(100, le=500),
+    db: Session = Depends(get_db)
+):
+    """Devuelve el historial de mensajes de un chat ordenado por fecha ascendente."""
+    msgs = db.query(ChatMensaje).filter(ChatMensaje.id_chat == chat_id).order_by(ChatMensaje.fecha_envio.asc()).offset(skip).limit(limit).all()
+    return [
+        {
+            "id_mensaje": m.id_mensaje,
+            "id_user": m.id_user,
+            "contenido": m.contenido,
+            "fecha_envio": str(m.fecha_envio),
+        }
+        for m in msgs
+    ]
+
 @router.get("/grupos/mis-grupos/", response_model=List[ChatResponse])
 def list_user_groups(
     skip: int = 0,
@@ -98,7 +118,7 @@ def list_user_groups(
     # Obtener todos los chats públicos y privados donde el usuario es miembro
     return db.query(Chat).join(
         ChatMiembro,
-        (Chat.id_chat == ChatMiembro.chat_id) & (ChatMiembro.user_id == current_user.id_user)
+        (Chat.id_chat == ChatMiembro.id_chat) & (ChatMiembro.id_user == current_user.id_user)
     ).union(
         db.query(Chat).filter(
             Chat.visibilidad == "publico",
@@ -106,3 +126,10 @@ def list_user_groups(
             Chat.estado == "activo"
         )
     ).offset(skip).limit(limit).all()
+
+@router.get("/grupos/{id_chat}", response_model=ChatResponse)
+def get_group_by_id(id_chat: int, db: Session = Depends(get_db)):
+    chat = db.query(Chat).filter(Chat.id_chat == id_chat).first()
+    if not chat:
+        raise HTTPException(status_code=404, detail="Grupo no encontrado")
+    return chat
