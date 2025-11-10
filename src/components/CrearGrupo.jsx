@@ -20,21 +20,24 @@ const CrearGrupo = ({ onGrupoCreado }) => {
                     }
                 });
                 const data = await response.json();
-                setEsAdmin(data.roles.includes('administrador'));
+                // El backend retorna { rol: "administrador" }
+                const rol = (data.rol || '').toLowerCase();
+                setEsAdmin(rol === 'administrador' || rol === 'roleenum.administrador');
             } catch (error) {
                 console.error('Error al verificar rol:', error);
             }
         };
-        
         checkAdminStatus();
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log('Cambiando visibilidad:', name, value);
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+        console.log('Nuevo estado:', {...formData, [name]: value});
     };
 
     const handleSubmit = async (e) => {
@@ -107,7 +110,7 @@ const CrearGrupo = ({ onGrupoCreado }) => {
                         name="visibilidad"
                         value={formData.visibilidad}
                         onChange={handleChange}
-                        disabled={!esAdmin && formData.visibilidad === 'privado'}
+                        disabled={!esAdmin}
                     >
                         <option value="publico">Público</option>
                         {esAdmin && <option value="privado">Privado</option>}

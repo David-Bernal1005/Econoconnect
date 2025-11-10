@@ -37,11 +37,17 @@ async def get_current_user(
     )
     
     try:
+        # Debug: show a truncated version of the token for troubleshooting
+        token_preview = (token[:30] + '...') if token and len(token) > 30 else token
+        print(f"[security] Decoding token: {token_preview}")
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
+            print("[security] Token decoded but 'sub' claim missing")
             raise credentials_exception
-    except JWTError:
+    except JWTError as e:
+        # Log the error for easier debugging (do not leak full token in production)
+        print(f"[security] JWT decode error: {e}")
         raise credentials_exception
     user = db.query(User).filter(User.username == username).first()
     if user is None:
