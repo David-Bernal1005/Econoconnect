@@ -5,33 +5,184 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
-  gap: 15px;
+  align-items: stretch; /* empuja contenido a la izquierda */
+  gap: 14px;
   height: 100%;
   width: 100%;
-  padding: 20px;
+  padding: 16px;
   background-color: #121826;
   border-radius: 12px;
+  /* Permite scroll vertical del panel, pero oculta cualquier desborde horizontal */
+  overflow-x: hidden; /* evita que se asome el panel de creación */
+  overflow-y: auto;   /* el formulario no se corta, se puede desplazar */
 }
 
 .box h2{
-    text-align: center;
-
+  margin: 0 0 6px 0;
+  text-align: left; /* izquierda */
+  color: #f1c40f;
 }
 
-.chat button {
+.inbox-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
   width: 100%;
-  text-align: left;
-  background: #f8f8f8;
-  color: #121826;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 10px;
-  cursor: pointer;
-  transition: 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.chat button:hover {
+.inbox-item{
+  width: 100%;
+}
+
+.inbox-button{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  background: #1c2120;
+  color: #fff6ea;
+  border: 1px solid #2b3130;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+
+.inbox-button:hover{
+  background: #2b3130;
+  border-color: #3a4241;
+}
+
+.avatar img{
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.inbox-meta{
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* para truncado */
+}
+
+.inbox-name{
+  font-weight: 700;
+  color: #ffd84d;
+}
+
+.inbox-last{
+  font-size: 12px;
+  color: #cfcfcf;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+/* Formulario crear chat acorde al estilo del proyecto */
+.create-group-form{
+  width: 100%;
+  background: rgba(28,33,32,0.95);
+  border: 1px solid #2b3130;
+  border-radius: 12px;
+  padding: 12px 12px 6px 12px;
+  color: #fff6ea;
+}
+
+.create-group-form .form-group{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.create-group-form input,
+.create-group-form textarea,
+.create-group-form select{
+  width: 100%;
+  border: none;
+  outline: none;
+  background: #121826;
+  color: #fff6ea;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.create-group-form textarea{
+  min-height: 70px;
+  resize: vertical;
+}
+
+.create-group-submit{
+  width: 100%;
+  padding: 10px 14px;
   background: #f1c40f;
-  color: #121826;
+  color: #1c2120;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.create-group-submit:hover{ background: #d4ab0c; }
+
+/* Mejoras UI/UX creación */
+.create-toggle-row{
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.create-toggle{
+  justify-content: center;
+}
+.create-toggle.active{
+  background: #2b3130;
+  border-color: #3a4241;
+}
+
+.create-group-wrapper{
+  overflow: hidden;
+  transition: grid-template-rows .28s ease;
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.create-group-wrapper.open{
+  grid-template-rows: 1fr;
+}
+.create-group-wrapper > .create-group-form{
+  min-height: 0;
+}
+/* Cuando está cerrado, ocultar por completo cualquier rastro visual/foco */
+.create-group-wrapper:not(.open) > .create-group-form{
+  visibility: hidden;
+  pointer-events: none;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+}
+
+.form-label{
+  font-size: 12px;
+  color: #ffd84d;
+}
+.optional{ color:#cfcfcf; font-weight: 400; }
+.helper-text{ color:#9aa0a6; margin-top: 4px; }
+.error-text{ color:#ff6b6b; }
+.error-global{ color:#ff6b6b; margin-left: 10px; }
+
+.field-meta-row{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.counter{ color:#9aa0a6; }
+
+.actions-row{ display:flex; align-items:center; gap:10px; }
+.create-group-submit[disabled]{
+  opacity: .6;
+  cursor: not-allowed;
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import "./login.css";
 
@@ -6,6 +7,7 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,14 +68,24 @@ const Login = () => {
             </div>
 
             <label>Contraseña:</label>
-            <div className="input-group">
+            <div className="input-group password-group">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                aria-label="Contraseña"
               />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
             </div>
 
             <div className="login-options">

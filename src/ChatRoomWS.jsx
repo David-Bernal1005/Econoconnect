@@ -1,25 +1,32 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import "./chat.css";
 
-export default function ChatRoomWS({ chatId, userId, onBack }) {
+export default function ChatRoomWS({ chat, userId, onBack }) {
   const [messages, setMessages] = useState([]);
   const [content, setContent] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [chatInfo, setChatInfo] = useState({ nombre: chat?.nombre || "", descripcion: chat?.descripcion || "" });
   const [addMemberUserId, setAddMemberUserId] = useState("");
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [connectionError, setConnectionError] = useState("");
   const socketRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const messagesEndRef = useRef(null);
+  const messagesAreaRef = useRef(null);
+  const firstLoadRef = useRef(false);
+  const chatId = chat?.id_chat;
 
   const API_BASE = 'http://127.0.0.1:8000';
 
   const connect = useCallback(() => {
     try {
+      if (!chatId) return;
       if (socketRef.current?.readyState === WebSocket.OPEN) {
         return; // Ya está conectado
       }
-      
+
       const wsUrl = `${API_BASE.replace('http', 'ws')}/ws/chat/${chatId}`;
       console.log('Intentando conectar a:', wsUrl);
       socketRef.current = new WebSocket(wsUrl);
@@ -28,7 +35,6 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
         console.log('WebSocket Connected');
         setIsConnected(true);
         setConnectionError("");
-        // Limpiar cualquier timeout de reconexión pendiente
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
           reconnectTimeoutRef.current = null;
@@ -36,8 +42,26 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
       };
 
       socketRef.current.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-        setMessages((prev) => [...prev, msg]);
+        let payload;
+        try { payload = JSON.parse(event.data); } catch { return; }
+        if (payload?.type === 'history' && Array.isArray(payload.messages)) {
+          // Reemplazar historial completo sólo si aún no hay mensajes (primera carga)
+          setMessages(payload.messages);
+          return;
+        }
+        if (payload?.type === 'message') {
+          setMessages((prev) => {
+            if (payload.client_id) {
+              const idx = prev.findIndex(m => m.pending && m.client_id === payload.client_id);
+              if (idx !== -1) {
+                const copy = prev.slice();
+                copy[idx] = { ...payload, pending: false };
+                return copy;
+              }
+            }
+            return [...prev, { ...payload, pending: false }];
+          });
+        }
       };
 
       socketRef.current.onerror = (error) => {
@@ -49,8 +73,6 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
       socketRef.current.onclose = (event) => {
         console.log('WebSocket Closed:', event.code, event.reason);
         setIsConnected(false);
-        
-        // Intentar reconectar después de 3 segundos
         reconnectTimeoutRef.current = setTimeout(() => {
           console.log('Intentando reconectar...');
           connect();
@@ -61,11 +83,96 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
       setIsConnected(false);
       setConnectionError("Error al crear la conexión WebSocket");
     }
-  }, [chatId]);
+  }, [chatId, API_BASE]);
+
+  // Auto-scroll al final: en la primera carga saltamos directo al final;
+  // luego, solo si el usuario está cerca del final (comportamiento tipo foro)
+  useEffect(() => {
+    if (!messagesAreaRef.current) return;
+    const el = messagesAreaRef.current;
+    if (firstLoadRef.current) {
+      // primera carga: ir al final sin animación
+      el.scrollTop = el.scrollHeight;
+      firstLoadRef.current = false;
+      return;
+    }
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+    if (nearBottom) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  }, [messages]);
+
+  // Al cambiar de chat, reseteamos info visible y mensajes
+  useEffect(() => {
+    setShowInfo(false);
+    setMessages([]);
+    firstLoadRef.current = true; // en cada cambio de chat, empezar desde el último
+    setChatInfo({
+      nombre: chat?.nombre || (chatId ? `Chat ${chatId}` : ""),
+      descripcion: chat?.descripcion || "",
+    });
+  }, [chatId, chat?.nombre, chat?.descripcion]);
 
   useEffect(() => {
     connect();
     checkAdminStatus();
+    // Cargar nombre y descripción del grupo correctamente
+    (async () => {
+      if (!chatId) return;
+      const token = localStorage.getItem('token');
+      const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+      try {
+        // Endpoint directo por id
+        const oneResp = await fetch(`${API_BASE}/api/v1/grupos/${chatId}`, { headers: authHeaders });
+        if (oneResp.ok) {
+          const g = await oneResp.json();
+          setChatInfo({
+            nombre: g?.nombre || (chatId ? `Chat ${chatId}` : ""),
+            descripcion: g?.descripcion || "",
+          });
+        } else {
+          // Fallback a listas si el endpoint directo no está disponible
+          let found = null;
+          const misResp = await fetch(`${API_BASE}/api/v1/grupos/mis-grupos/`, { headers: authHeaders });
+          if (misResp.ok) {
+            const list = await misResp.json();
+            found = Array.isArray(list) ? list.find(c => c.id_chat === Number(chatId)) : null;
+          }
+          if (!found) {
+            const pubResp = await fetch(`${API_BASE}/api/v1/grupos/publicos/`);
+            if (pubResp.ok) {
+              const listPub = await pubResp.json();
+              found = Array.isArray(listPub) ? listPub.find(c => c.id_chat === Number(chatId)) : null;
+            }
+          }
+          if (found) {
+            setChatInfo({
+              nombre: found.nombre || (chatId ? `Chat ${chatId}` : ""),
+              descripcion: found.descripcion || "",
+            });
+          } else {
+            setChatInfo({ nombre: chat?.nombre || (chatId ? `Chat ${chatId}` : ""), descripcion: chat?.descripcion || "" });
+          }
+        }
+      } catch (err) {
+        console.warn('No se pudo cargar info del chat:', err);
+      setChatInfo({ nombre: chat?.nombre || (chatId ? `Chat ${chatId}` : ""), descripcion: chat?.descripcion || "" });
+      }
+    })();
+
+    // Cargar historial desde la BD
+    (async () => {
+      if (!chatId) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/chats/${chatId}/mensajes?limit=200`);
+        if (res.ok) {
+          const hist = await res.json();
+          if (Array.isArray(hist)) {
+            setMessages(hist);
+          }
+        }
+      } catch (e) {
+        console.warn('No se pudo cargar el historial de mensajes', e);
+      }
+    })();
 
     return () => {
       if (reconnectTimeoutRef.current) {
@@ -152,19 +259,30 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
   };
 
   const handleSend = () => {
-    if (!content.trim() || !isConnected) return;
-    
+    if (!content.trim() || !isConnected || !chatId) return;
     try {
+      const clientId = (crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+      const sending = content;
+
+      // Optimistic UI: agregar mensaje "pendiente" al instante
+      const tempMsg = {
+        id_mensaje: `tmp-${clientId}`,
+        id_user: userId,
+        contenido: sending,
+        fecha_envio: new Date().toISOString(),
+        client_id: clientId,
+        pending: true,
+        type: 'message',
+      };
+      setMessages((prev) => [...prev, tempMsg]);
+
+      // Enviar al servidor con client_id para conciliar
       socketRef.current.send(
-        JSON.stringify({
-          id_user: userId,
-          contenido: content,
-        })
+        JSON.stringify({ id_user: userId, contenido: sending, client_id: clientId })
       );
       setContent("");
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
-      // Intentar reconectar si hay un error al enviar
       connect();
     }
   };
@@ -174,11 +292,26 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
       <div className="chatroom-panel">
         <div className="chat-header">
           <button className="back-button" onClick={onBack}>&larr;</button>
-          <h2 className="chatroom-title">Chat {chatId}</h2>
+          <h2
+            className="chatroom-title"
+            onClick={() => setShowInfo((v) => !v)}
+            title={showInfo ? 'Ocultar descripción' : 'Mostrar descripción'}
+          >
+            {chatInfo.nombre || `Chat ${chatId}`}
+          </h2>
           <div style={{ fontSize: 12, color: isConnected ? 'green' : 'red' }}>
             {isConnected ? '🟢 Conectado' : '🔴 Desconectado'}
           </div>
         </div>
+
+        {showInfo && (
+          <div className="chat-subheader">
+            <div className="chat-subtitle">Información del chat</div>
+            <div className="chat-desc">
+              {chatInfo.descripcion?.trim() ? chatInfo.descripcion : 'Sin descripción'}
+            </div>
+          </div>
+        )}
 
         {connectionError && (
           <div style={{ padding: 8, backgroundColor: '#ffcccc', color: '#cc0000', marginBottom: 8, borderRadius: 4 }}>
@@ -186,40 +319,54 @@ export default function ChatRoomWS({ chatId, userId, onBack }) {
           </div>
         )}
 
-        <div className="messages-area">
-          {messages.length === 0 ? (
+  <div className="messages-area whatsapp-bg" ref={messagesAreaRef}>
+          {messages.length === 0 && (
             <div className="empty-state">No hay mensajes todavía</div>
-          ) : (
-            messages.map((msg) => (
-              <div key={msg.id_mensaje} className="message">
-                <div className="msg-avatar"><img src="/img/perfil.svg" alt="a"/></div>
-                <div className="msg-body">
-                  <div className="msg-author">Usuario {msg.id_user}</div>
-                  <div className="msg-text">{msg.contenido}</div>
-                </div>
-              </div>
-            ))
           )}
+          {messages.map((msg) => {
+            const isMine = msg.id_user === userId;
+            return (
+              <div
+                key={msg.id_mensaje || `${msg.id_user}-${Math.random()}`}
+                className={`message-bubble ${isMine ? 'mine' : 'other'} ${msg.pending ? 'pending' : ''}`}
+              >
+                {!isMine && (
+                  <div className="bubble-author">Usuario {msg.id_user}</div>
+                )}
+                <div className="bubble-text">{msg.contenido}</div>
+                {msg.pending ? (
+                  <div className="bubble-meta">Enviando…</div>
+                ) : msg.fecha_envio && (
+                  <div className="bubble-meta">
+                    {new Date(msg.fecha_envio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          <div ref={messagesEndRef} />
         </div>
 
-        <div className="chat-input-row">
+        <div className="composer">
           <input
-            className="chat-input"
+            className="composer-input"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={(e) => {
-              // Enviar con Enter (sin Shift)
-              if (e.key === "Enter" && !e.shiftKey) {
+              if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
               }
             }}
-            placeholder="Enviar un mensaje..."
-            aria-label="Escribe un mensaje"
+            placeholder="Mensaje"
             disabled={!isConnected}
           />
-          <button className="chat-send" onClick={handleSend} title="Enviar" disabled={!isConnected}>
-            <img src="/img/graficos.svg" alt="send" />
+          <button
+            className="composer-send"
+            onClick={handleSend}
+            disabled={!isConnected || !content.trim()}
+          >
+            ▶
           </button>
         </div>
 

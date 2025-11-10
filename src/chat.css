@@ -15,16 +15,22 @@
 }
 
 .chat-inbox {
-  width: 440px;
+  flex: 0 0 560px; /* aún más ancho que 528px (~+27%) */
+  max-width: 560px;
+  /* Clip horizontal, pero deja scroll vertical para no cortar el formulario */
+  overflow-x: hidden; /* recorta cualquier contenido que se asome */
+  overflow-y: auto;
+  position: relative; /* crea un contexto de recorte estable */
 }
 
 .chat-area {
   flex: 1;
-  min-width: 720px;
+  min-width: 720px; /* como el diseño original */
   max-width: 1400px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 0; /* permite que el área de mensajes haga overflow-y */
 }
 
 .box {
@@ -33,6 +39,9 @@
   border-radius: 12px;
   padding: 18px;
   height: 100%;
+  width: 100%; /* ocupa el ancho del contenedor */
+  box-sizing: border-box;
+  overflow: hidden; /* tapa cualquier desbordamiento interno/visual */
 }
 
 .box-title {
@@ -215,28 +224,38 @@
   margin: 0;
   font-weight: 800;
   font-size: 28px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .chatroom-panel {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   gap: 12px;
   width: 100%;
   flex: 1;
-  background: #3f3f41;
+  background: #3f3f41; /* paleta del proyecto */
   border-radius: 16px;
   padding: 20px;
+  min-height: 0; /* evita crecer más que el contenedor */
 }
 
 .messages-area {
   flex: 1;
-  overflow: auto;
-  padding-right: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  gap: 8px;
+  min-width: 0; /* clave para cortar overflow horizontal en flex */
+  scroll-behavior: smooth; /* desplazamiento suave al final */
+  scrollbar-gutter: stable; /* evita saltos cuando aparece la barra */
+}
+
+.whatsapp-bg {
+  /* mantener fondo consistente con el panel; sin patrón nuevo */
+  background: transparent;
 }
 
 .empty-state {
@@ -245,79 +264,114 @@
   margin-top: 40px;
 }
 
-.message {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  width: 100%;
-  margin-bottom: 12px;
+/* Burbujas tipo WhatsApp */
+.message-bubble {
+  max-width: min(85%, 820px);
+  padding: 8px 10px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.35;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.message-bubble.other {
+  align-self: flex-start;
+  background: #2f2f31; /* gris del tema */
+  color: #ffffff;
+  border-top-left-radius: 4px;
+  word-break: break-word;
+}
+.message-bubble.mine {
+  align-self: flex-end;
+  background: #f1c40f; /* amarillo acento del proyecto */
+  color: #222;
+  border-top-right-radius: 4px;
+  word-break: break-word;
+}
+.bubble-author {
+  font-size: 11px;
+  color: #f1c40f; /* usar el acento para autor */
+}
+.bubble-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.bubble-meta {
+  font-size: 10px;
+  opacity: 0.7;
+  align-self: flex-end;
+}
+.message-bubble.pending {
+  opacity: 0.55;
+  position: relative;
+}
+.message-bubble.pending:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(45deg,rgba(255,255,255,0.08) 0 6px, rgba(0,0,0,0) 6px 12px);
+  pointer-events: none;
 }
 
-.msg-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex: 0 0 44px;
-}
-
-.msg-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.msg-body {
-  background: #2b2b2d;
-  padding: 10px 12px;
-  border-radius: 8px;
-  color: #fff;
-  flex: 1 1 auto;
-}
-
-.msg-author {
-  font-weight: 700;
-  font-size: 12px;
-  color: #f1c40f;
-  margin-bottom: 6px;
-}
-
-.chat-input-row {
+.composer {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-top: 12px;
+  gap: 10px;
+  background: #2f2f31; /* barra acorde al tema */
+  padding: 10px;
+  border-radius: 12px;
 }
-
-.chat-input {
+.composer-input {
   flex: 1;
-  background: #121212;
-  border: none;
-  border-radius: 999px;
-  padding: 14px 18px;
-  color: #fff;
+  background: #121826; /* mismo tono que inputs del proyecto */
+  border: 1px solid #4a4a4c;
+  border-radius: 20px;
+  padding: 12px 14px;
+  color: #ffffff;
 }
-
-.chat-input::placeholder {
+.composer-input::placeholder {
   color: #cfcfcf;
 }
-
-.chat-send {
-  width: 56px;
-  height: 56px;
-  background: #222;
+.composer-send {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   border: none;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #f1c40f; /* botón acento */
+  color: #222;
   cursor: pointer;
 }
+.composer-send:hover { background: #f39c12; }
 
-.chat-send img {
-  width: 22px;
-  height: 22px;
-  filter: invert(88%) sepia(84%) saturate(522%) hue-rotate(335deg) brightness(93%) contrast(101%);
+/* Info desplegable del chat (estilo WhatsApp, usando la paleta del sitio) */
+.chat-subheader {
+  background: #2f2f31;
+  color: #fff;
+  border-left: 4px solid #f1c40f;
+  margin: 6px 12px 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  max-width: 760px;
+  overflow-wrap: anywhere;
+}
+
+.chat-subtitle {
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #f1c40f;
+  margin-bottom: 4px;
+}
+
+.chat-desc {
+  font-size: 14px;
+  color: #eaeaea;
+  white-space: pre-wrap;
+  line-height: 1.4;
 }
 
 @media (max-width: 900px) {

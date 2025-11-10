@@ -86,3 +86,24 @@
   display: flex;
   flex-direction: column;
 }
+
+/* Global brand logo fixed */
+.global-brand {
+  position: fixed;
+  bottom: 10px;
+  right: 12px;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.global-brand img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  background: #1c2120;
+  padding: 4px;
+}

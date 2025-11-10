@@ -65,23 +65,26 @@
     color: white;
 }
 
+.mensaje {
+    max-width: 75%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 14px;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+    line-height: 1.35;
+}
+.mensaje-propio {
+    align-self: flex-end;
+    background: #f1c40f; /* acento del sitio */
+    color: #222;
+    border-top-right-radius: 4px;
+}
 .mensaje-otro {
     align-self: flex-start;
-    background: #e9ecef;
-    color: #212529;
+    background: #2f2f31; /* gris del tema */
+    color: #ffffff;
+    border-top-left-radius: 4px;
 }
-
-.mensaje-contenido {
-    margin-bottom: 0.25rem;
-}
-
-.mensaje-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    opacity: 0.8;
-}
-
 .mensaje-form {
     display: flex;
     gap: 1rem;

@@ -22,6 +22,7 @@ import EditUser from "./EditUser";
 
 
 import "./app.css";
+import ecLogo from "./assets/logo-ec.png";
 
 const App = () => {
   // Detectar ruta actual para ocultar el botón en /login
@@ -90,8 +91,25 @@ const App = () => {
 
   const isLogged = Boolean(localStorage.getItem("token"));
 
+  // Set global title and favicon to Econoconnect and custom logo
+  useEffect(() => {
+    document.title = "Econoconnect";
+    const link = document.querySelector("link[rel='icon']") || document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/png";
+    link.href = ecLogo;
+    if (!link.parentNode) document.head.appendChild(link);
+  }, []);
+
+  const GlobalBrand = () => (
+    <a href="/" className="global-brand" aria-label="Econoconnect">
+      <img src={ecLogo} alt="Econoconnect" />
+    </a>
+  );
+
   return (
     <Router>
+      <GlobalBrand />
       <LoginButton />
       <Routes>
         <Route
@@ -139,7 +157,7 @@ const App = () => {
               <main className="chat-area">
                 {selectedChat ? (
                   <ChatRoomWS
-                    chatId={selectedChat}
+                    chat={selectedChat}
                     userId={userId}
                     onBack={() => setSelectedChat(null)}
                   />
