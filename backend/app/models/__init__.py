@@ -10,7 +10,7 @@ from app.models.chat import Chat
 from app.models.chatmensaje import ChatMensaje
 from app.models.chatmensajeadjunto import ChatMensajeAdjunto
 from app.models.chatmiembro import ChatMiembro
-from app.models.comentario import Comentario
+from app.models.comentarioforo import Comentario
 from app.models.comentarionoticias import ComentarioNoticia
 from app.models.comentariopublicaciones import ComentarioPublicacion
 from app.models.cometarioadjunto import ComentarioAdjunto

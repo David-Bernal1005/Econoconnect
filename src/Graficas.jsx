@@ -12,8 +12,28 @@ function ForoWS({ foroId = 1 }) {
   const userId = localStorage.getItem("user_id");
   const token = localStorage.getItem("token");
 
+  // Cargar comentarios existentes al montar
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const fetchComentarios = async () => {
+      if (!token) return;
+      try {
+        const res = await fetch(`http://localhost:8000/ws/foro/${foroId}/comentarios`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // La API devuelve los comentarios ordenados por fecha desc; invertir para mostrar cronológicamente
+          setComentarios(Array.isArray(data) ? data.reverse() : []);
+        }
+      } catch (e) {
+        console.warn('No se pudieron cargar comentarios previos', e);
+        setError('No se pudieron cargar los comentarios previos.');
+      }
+    };
+    fetchComentarios();
+  }, [foroId, token]);
+
+  useEffect(() => {
     if (!token) {
       setError("Necesitas iniciar sesión para participar en el foro");
       return;
@@ -56,26 +76,61 @@ function ForoWS({ foroId = 1 }) {
         socketRef.current.close();
       }
     };
-  }, [foroId]);
+  }, [foroId, token]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    
     if (!token || !userId) {
       setError("Solo puedes comentar si has iniciado sesión.");
       return;
     }
-
     if (!nuevoComentario.trim()) return;
 
-    const mensaje = {
-      contenido: nuevoComentario.trim(),
+    const mensaje = { contenido: nuevoComentario.trim() };
+
+    const sendViaRest = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/ws/foro/${foroId}/comentarios`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(mensaje)
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          setError('Error guardando comentario: ' + (text || res.status));
+          return null;
+        }
+        const data = await res.json();
+        // Añadir el comentario retornado al estado
+        setComentarios(prev => [...prev, data]);
+        return data;
+      } catch (err) {
+        console.error('Error enviando comentario por REST', err);
+        setError('Error guardando comentario');
+        return null;
+      }
     };
 
-    socketRef.current.send(JSON.stringify(mensaje));
-    setNuevoComentario("");
-    setError(""); 
+    // Intentar enviar por WebSocket si está abierto
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      try {
+        socketRef.current.send(JSON.stringify(mensaje));
+        // Limpiar input y confiar en el broadcast para agregar el comentario
+        setNuevoComentario('');
+        setError('');
+        return;
+      } catch (err) {
+        console.warn('WS send falló, usando REST fallback', err);
+        sendViaRest().then(saved => { if (saved) setNuevoComentario(''); });
+        return;
+      }
+    }
+
+    // Si WS no está disponible, usar REST
+    sendViaRest().then(saved => { if (saved) setNuevoComentario(''); });
   };
 
   return (
@@ -88,7 +143,9 @@ function ForoWS({ foroId = 1 }) {
         {comentarios.map((c, index) => (
           <div key={c.id_comentario || index} className="comentario">
             <strong>{c.username || `Usuario ${c.id_user}`}:</strong> {c.contenido}
-            {c.fecha_creacion && <span className="fecha">{new Date(c.fecha_creacion).toLocaleString()}</span>}
+            {c.fecha_creacion && (
+              <span className="fecha">{new Date(c.fecha_creacion).toLocaleString()}</span>
+            )}
           </div>
         ))}
       </div>
