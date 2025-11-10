@@ -79,6 +79,7 @@ async def get_comentarios_foro(
         "id_comentario": comentario.id_comentario,
         "id_user": comentario.id_user,
         "username": comentario.autor.username if comentario.autor else None,
+        "profile_image": comentario.autor.profile_image if comentario.autor else None,
         "contenido": comentario.contenido,
         "fecha_creacion": str(comentario.fecha_creacion)
     } for comentario in comentarios]
@@ -130,6 +131,7 @@ async def foro_websocket(websocket: WebSocket, foro_id: int, db: Session = Depen
                     "id_comentario": getattr(nuevo_comentario, 'id_comentario', None),
                     "id_user": getattr(nuevo_comentario, 'id_user', None),
                     "username": getattr(user, 'username', None),
+                    "profile_image": getattr(user, 'profile_image', None),
                     "contenido": nuevo_comentario.contenido,
                     "fecha_creacion": str(nuevo_comentario.fecha_creacion)
                 }
