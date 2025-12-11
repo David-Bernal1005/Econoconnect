@@ -50,12 +50,13 @@ def update_noticia(noticia_id: int, noticia: NoticiaUpdateSchema = Body(...), db
         db.refresh(noticia_db)
         print(f"[DEBUG] Noticia actualizada: {noticia_db}")
         
-        # Retornar una respuesta JSON simple
+        # Retornar una respuesta JSON simple incluyendo los campos editables
         return {
             "success": True,
             "message": "Noticia editada correctamente",
             "id": noticia_db.Id_Noticia,
-            "titulo": noticia_db.titulo
+            "titulo": noticia_db.titulo,
+            "resumen": noticia_db.resumen,
         }
     except HTTPException:
         raise

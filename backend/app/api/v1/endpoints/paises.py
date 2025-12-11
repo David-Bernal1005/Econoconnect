@@ -7,6 +7,7 @@ from typing import List
 
 router = APIRouter()
 
+
 class PaisSchema(BaseModel):
     id_pais: int
     nombre: str
@@ -17,16 +18,28 @@ class PaisSchema(BaseModel):
         "from_attributes": True
     }
 
+
+class PaisCreateSchema(BaseModel):
+    nombre: str
+    codigo_iso: str | None = None
+    codigo_telefono: str | None = None
+
+
 @router.get("/paises", response_model=List[PaisSchema])
 def get_paises(db: Session = Depends(get_db)):
     """Obtener todos los países"""
     paises = db.query(Pais).order_by(Pais.nombre).all()
     return paises
 
+
 @router.post("/paises", response_model=PaisSchema)
-def create_pais(pais_data: dict, db: Session = Depends(get_db)):
+def create_pais(pais_data: PaisCreateSchema, db: Session = Depends(get_db)):
     """Crear un nuevo país"""
-    pais = Pais(**pais_data)
+    pais = Pais(
+        nombre=pais_data.nombre,
+        codigo_iso=pais_data.codigo_iso,
+        codigo_telefono=pais_data.codigo_telefono,
+    )
     db.add(pais)
     db.commit()
     db.refresh(pais)

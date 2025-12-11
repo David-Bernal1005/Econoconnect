@@ -198,10 +198,10 @@ def test_create_noticia_success(client: TestClient, test_db):
         "titulo": "Nueva noticia",
         "resumen": "Resumen de la nueva noticia",
         "enlace": "https://example.com/nueva",
+        "fecha_publicacion": datetime.now().isoformat(),
+        "categoria": categoria.Nombre_Categoria,
         "usuario": user.username,
-        "Id_Categoria": categoria.Id_Categoria,
-        "Id_Fuente": fuente.Id_Fuente,
-        "etiquetas": "tag1,tag2,tag3"
+        "etiquetas": ["tag1", "tag2", "tag3"],
     }
     
     response = client.post("/api/v1/noticias", json=noticia_data)
