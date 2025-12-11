@@ -38,6 +38,7 @@ def test_crear_foro_ok(client: TestClient, test_db):
     payload = {"nombre": "Foro de prueba", "descripcion": "desc", "id_grafica": None}
     resp = client.post("/api/v1/foro", json=payload, headers=headers)
 
+    # Endpoint devuelve 200 en esta implementación
     assert resp.status_code == 200
     data = resp.json()
     assert data["nombre"] == "Foro de prueba"
@@ -50,7 +51,8 @@ def test_crear_foro_no_autenticado(client: TestClient, test_db):
     payload = {"nombre": "Foro de prueba", "descripcion": "desc", "id_grafica": None}
     resp = client.post("/api/v1/foro", json=payload)
 
-    assert resp.status_code == 401
+    # Sin credenciales, el HTTPBearer responde 403 (Forbidden)
+    assert resp.status_code == 403
 
 
 def test_listar_foros(client: TestClient, test_db):

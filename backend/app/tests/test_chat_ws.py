@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, AsyncMock, MagicMock
+import asyncio
 from app.models.chat import Chat
 from app.models.chatmensaje import ChatMensaje
 from app.models.user import User, StateUser
@@ -41,8 +42,7 @@ def create_test_chat(test_db, user):
     return chat
 
 
-@pytest.mark.asyncio
-async def test_websocket_connection():
+def test_websocket_connection():
     """Test WebSocket connection establishment"""
     from app.api.v1.endpoints.chat_ws import connect, active_connections
     
@@ -54,7 +54,7 @@ async def test_websocket_connection():
     active_connections.clear()
     
     # Test connection
-    await connect(chat_id, websocket)
+    asyncio.run(connect(chat_id, websocket))
     
     # Verify websocket was accepted
     websocket.accept.assert_called_once()
@@ -64,8 +64,7 @@ async def test_websocket_connection():
     assert websocket in active_connections[chat_id]
 
 
-@pytest.mark.asyncio
-async def test_websocket_disconnect():
+def test_websocket_disconnect():
     """Test WebSocket disconnection"""
     from app.api.v1.endpoints.chat_ws import connect, disconnect, active_connections
     
@@ -77,7 +76,7 @@ async def test_websocket_disconnect():
     active_connections.clear()
     
     # Connect first
-    await connect(chat_id, websocket)
+    asyncio.run(connect(chat_id, websocket))
     assert websocket in active_connections[chat_id]
     
     # Test disconnection
@@ -87,8 +86,7 @@ async def test_websocket_disconnect():
     assert websocket not in active_connections[chat_id]
 
 
-@pytest.mark.asyncio
-async def test_websocket_broadcast():
+def test_websocket_broadcast():
     """Test WebSocket message broadcasting"""
     from app.api.v1.endpoints.chat_ws import connect, broadcast, active_connections
     
@@ -101,8 +99,8 @@ async def test_websocket_broadcast():
     active_connections.clear()
     
     # Connect multiple websockets
-    await connect(chat_id, websocket1)
-    await connect(chat_id, websocket2)
+    asyncio.run(connect(chat_id, websocket1))
+    asyncio.run(connect(chat_id, websocket2))
     
     # Test broadcasting
     message = {"content": "Test message", "user": "test_user"}
@@ -111,7 +109,7 @@ async def test_websocket_broadcast():
     with patch('app.api.v1.endpoints.chat_ws.active_connections.get_db', 
                return_value=active_connections.get):
         with patch.object(active_connections, 'get', return_value=[websocket1, websocket2]):
-            await broadcast(chat_id, message)
+            asyncio.run(broadcast(chat_id, message))
     
     # Note: Due to the typo in the original code (get_db instead of get),
     # this test documents the current behavior but would need the code to be fixed
@@ -131,14 +129,9 @@ def test_websocket_endpoint_integration(client: TestClient, test_db):
     assert chat.creador_id == user.id_user
 
 
-@pytest.mark.asyncio
-async def test_websocket_message_saving():
+def test_websocket_message_saving():
     """Test that WebSocket messages are saved to database"""
-    from app.api.v1.endpoints.chat_ws import chat_endpoint
-    from app.db.session import get_db
-    
-    # This would require a more complex setup to test the actual WebSocket endpoint
-    # For now, we'll test the message creation logic separately
+    from app.api.v1.endpoints.chat_ws import chat_endpoint  # noqa: F401
     
     # Mock data that would come from WebSocket
     message_data = {
@@ -174,8 +167,7 @@ def test_websocket_active_connections_structure():
     active_connections.clear()
 
 
-@pytest.mark.asyncio
-async def test_multiple_connections_same_chat():
+def test_multiple_connections_same_chat():
     """Test multiple WebSocket connections to the same chat"""
     from app.api.v1.endpoints.chat_ws import connect, active_connections
     
@@ -189,9 +181,9 @@ async def test_multiple_connections_same_chat():
     active_connections.clear()
     
     # Connect multiple websockets to the same chat
-    await connect(chat_id, websocket1)
-    await connect(chat_id, websocket2)
-    await connect(chat_id, websocket3)
+    asyncio.run(connect(chat_id, websocket1))
+    asyncio.run(connect(chat_id, websocket2))
+    asyncio.run(connect(chat_id, websocket3))
     
     # Verify all connections are stored
     assert len(active_connections[chat_id]) == 3
@@ -200,8 +192,7 @@ async def test_multiple_connections_same_chat():
     assert websocket3 in active_connections[chat_id]
 
 
-@pytest.mark.asyncio
-async def test_connections_different_chats():
+def test_connections_different_chats():
     """Test WebSocket connections to different chats"""
     from app.api.v1.endpoints.chat_ws import connect, active_connections
     
@@ -215,8 +206,8 @@ async def test_connections_different_chats():
     active_connections.clear()
     
     # Connect websockets to different chats
-    await connect(chat_id1, websocket1)
-    await connect(chat_id2, websocket2)
+    asyncio.run(connect(chat_id1, websocket1))
+    asyncio.run(connect(chat_id2, websocket2))
     
     # Verify connections are separated by chat
     assert chat_id1 in active_connections

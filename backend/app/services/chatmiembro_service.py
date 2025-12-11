@@ -151,7 +151,7 @@ class ChatMiembroService:
         return [
             {
                 "id_user": user.id_user,
-                "nombre": user.nombre,
+                "nombre": user.name,
                 "email": user.email,
                 "rol_chat": miembro.rol_chat,
                 "fecha_ingreso": miembro.fecha_ingreso

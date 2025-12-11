@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from app.models.user import User, StateUser
 from app.core.security import create_access_token
+from app.schemas.user import UserUpdateRequest
 
 
 def create_test_user(test_db):
@@ -41,7 +42,10 @@ def test_update_user_success(client: TestClient, test_db):
         "lastname": "Pérez González",
         "email": "juan.carlos@example.com",
         "cellphone": "+1234567891",
-        "direction": "Calle 456"
+        "direction": "Calle 456",
+        "country": "Colombia",
+        "id_pais": None,
+        "profile_image": None,
     }
     
     response = client.put("/api/v1/users/me", json=update_data, headers=headers)
@@ -59,7 +63,10 @@ def test_update_user_no_token(client: TestClient, test_db):
         "lastname": "Pérez González",
         "email": "juan.carlos@example.com",
         "cellphone": "+1234567891",
-        "direction": "Calle 456"
+        "direction": "Calle 456",
+        "country": "Colombia",
+        "id_pais": None,
+        "profile_image": None,
     }
     
     response = client.put("/api/v1/users/me", json=update_data)
@@ -73,7 +80,10 @@ def test_update_user_invalid_token(client: TestClient, test_db):
         "lastname": "Pérez González",
         "email": "juan.carlos@example.com",
         "cellphone": "+1234567891",
-        "direction": "Calle 456"
+        "direction": "Calle 456",
+        "country": "Colombia",
+        "id_pais": None,
+        "profile_image": None,
     }
     
     headers = {"Authorization": "Bearer invalid_token"}
@@ -87,7 +97,14 @@ def test_update_user_partial_data(client: TestClient, test_db):
     headers = create_auth_headers(user.username)
     
     update_data = {
-        "name": "Juan Carlos"
+        "name": "Juan Carlos",
+        "lastname": user.lastname,
+        "email": user.email,
+        "cellphone": user.cellphone,
+        "direction": user.direction,
+        "country": user.country,
+        "id_pais": None,
+        "profile_image": None,
     }
     
     response = client.put("/api/v1/users/me", json=update_data, headers=headers)

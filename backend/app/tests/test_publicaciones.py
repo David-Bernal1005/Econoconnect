@@ -42,20 +42,17 @@ def test_get_publicaciones_with_data(client: TestClient, test_db):
         Publicacion(
             titulo="Publicación 1",
             contenido="Contenido de la primera publicación",
-            usuario_id=user.id_user,
-            fecha_creacion=datetime.now()
+            id_user=user.id_user,
         ),
         Publicacion(
             titulo="Publicación 2",
             contenido="Contenido de la segunda publicación",
-            usuario_id=user.id_user,
-            fecha_creacion=datetime.now()
+            id_user=user.id_user,
         ),
         Publicacion(
             titulo="Publicación 3",
             contenido="Contenido de la tercera publicación",
-            usuario_id=user.id_user,
-            fecha_creacion=datetime.now()
+            id_user=user.id_user,
         )
     ]
     
@@ -82,8 +79,7 @@ def test_get_publicaciones_structure(client: TestClient, test_db):
     publicacion = Publicacion(
         titulo="Test Publication",
         contenido="Test content",
-        usuario_id=user.id_user,
-        fecha_creacion=datetime.now()
+        id_user=user.id_user,
     )
     test_db.add(publicacion)
     test_db.commit()
@@ -96,7 +92,7 @@ def test_get_publicaciones_structure(client: TestClient, test_db):
     pub = data[0]
     assert "titulo" in pub
     assert "contenido" in pub
-    assert "usuario_id" in pub
+    assert "id_user" in pub
     assert "fecha_creacion" in pub
     assert pub["titulo"] == "Test Publication"
     assert pub["contenido"] == "Test content"

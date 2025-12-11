@@ -27,12 +27,12 @@ def create_test_data(test_db):
     test_db.commit()
     
     # Create category
-    categoria = Categoria(nombre="Tecnología", descripcion="Noticias de tecnología")
+    categoria = Categoria(Nombre_Categoria="Tecnología", Descripcion="Noticias de tecnología")
     test_db.add(categoria)
     test_db.commit()
     
     # Create source
-    fuente = Fuente(nombre="TechNews", url="https://technews.com", descripcion="Portal de tecnología")
+    fuente = Fuente(Nombre_Fuente="TechNews", Url_Fuente="https://technews.com", Descripcion="Portal de tecnología")
     test_db.add(fuente)
     test_db.commit()
     

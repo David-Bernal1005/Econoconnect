@@ -5,6 +5,7 @@ from app.models.foro import Foro, EstadoForo
 from app.models.comentarioforo import Comentario
 from app.core.security import create_access_token
 from datetime import datetime
+import asyncio
 
 
 def create_test_user(test_db, username: str, email: str) -> User:
@@ -112,8 +113,7 @@ def test_crear_comentario_rest_foro_no_encontrado(client: TestClient, test_db):
     assert resp.status_code == 404
 
 
-@pytest.mark.asyncio
-async def test_websocket_conexion_basica(client: TestClient, test_db):
+def test_websocket_conexion_basica(client: TestClient, test_db):
     """Conexión WebSocket básica con token válido (no valida broadcast)."""
     user = create_test_user(test_db, "autor", "autor@example.com")
     foro = Foro(nombre="Foro", descripcion="d", autor_id=user.id_user, estado=EstadoForo.activo)
@@ -123,6 +123,6 @@ async def test_websocket_conexion_basica(client: TestClient, test_db):
 
     token = create_access_token({"sub": user.username, "rol": "usuario"})
 
+    # La conexión WebSocket con TestClient ya es síncrona, no requiere pytest-asyncio.
     with client.websocket_connect(f"/ws/foro/{foro.id_foro}?token={token}") as websocket:
-        # Enviar un mensaje sencillo y cerrar. Si no lanza excepción, la conexión es válida.
         websocket.send_text('{"contenido": "mensaje"}')

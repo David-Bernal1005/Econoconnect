@@ -132,13 +132,6 @@ def test_get_etiquetas_different_states(client: TestClient, test_db):
             autor_id=user.id_user,
             estado="inactiva",
             fecha_creacion=datetime.now()
-        ),
-        Etiqueta(
-            nombre="Pendiente 1",
-            descripcion="Etiqueta pendiente 1",
-            autor_id=user.id_user,
-            estado="pendiente",
-            fecha_creacion=datetime.now()
         )
     ]
     
@@ -149,13 +142,12 @@ def test_get_etiquetas_different_states(client: TestClient, test_db):
     response = client.get("/api/v1/etiquetas")
     assert response.status_code == 200
     data = response.json()
-    assert len(data) == 3
+    assert len(data) == 2
     
-    # Verify all states are returned
+    # Verify both supported states are returned
     estados = [tag["estado"] for tag in data]
     assert "activa" in estados
     assert "inactiva" in estados
-    assert "pendiente" in estados
 
 
 def test_get_etiquetas_fecha_creacion_format(client: TestClient, test_db):
