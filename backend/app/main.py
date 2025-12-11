@@ -6,13 +6,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.endpoints import (
     auth, noticias, publicaciones, graficas, user, user_update,
-    chat, chat_ws, etiquetas, paises, foro_ws, chatmiembros
-)
-
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from app.api.v1.endpoints import (
-    auth, noticias, publicaciones, graficas, user, user_update,
-    chat, chat_ws, etiquetas, paises, foro_ws, chatmiembros, seguidores
+    chat, chat_ws, etiquetas, paises, foro, foro_ws, chatmiembros, seguidores
 )
 
 
@@ -40,6 +34,7 @@ app.include_router(chat.router, prefix="/api/v1")
 app.include_router(chatmiembros.router, prefix="/api/v1")
 app.include_router(chat_ws.router)
 app.include_router(foro_ws.router)  # El router de foro_ws incluye su propio prefijo
+app.include_router(foro.router, prefix="/api/v1")
 app.include_router(noticias.router, prefix="/api/v1")
 app.include_router(publicaciones.router, prefix="/api/v1")
 app.include_router(graficas.router, prefix="/api/v1", tags=["graficas"])

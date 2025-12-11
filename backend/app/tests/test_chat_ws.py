@@ -95,25 +95,16 @@ def test_websocket_broadcast():
     websocket2 = AsyncMock()
     chat_id = 1
     
-    # Clear active connections
+    # Clear active connections y registrar websockets simulados
     active_connections.clear()
-    
-    # Connect multiple websockets
-    asyncio.run(connect(chat_id, websocket1))
-    asyncio.run(connect(chat_id, websocket2))
-    
+    active_connections[chat_id] = [websocket1, websocket2]
+
     # Test broadcasting
     message = {"content": "Test message", "user": "test_user"}
-    
-    # Fix the typo in the original code for testing
-    with patch('app.api.v1.endpoints.chat_ws.active_connections.get_db', 
-               return_value=active_connections.get):
-        with patch.object(active_connections, 'get', return_value=[websocket1, websocket2]):
-            asyncio.run(broadcast(chat_id, message))
-    
-    # Note: Due to the typo in the original code (get_db instead of get),
-    # this test documents the current behavior but would need the code to be fixed
-    # to work properly
+    asyncio.run(broadcast(chat_id, message))
+
+    websocket1.send_json.assert_called_once_with(message)
+    websocket2.send_json.assert_called_once_with(message)
 
 
 def test_websocket_endpoint_integration(client: TestClient, test_db):

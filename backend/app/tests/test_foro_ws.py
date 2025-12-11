@@ -95,7 +95,8 @@ def test_crear_comentario_rest_no_autenticado(client: TestClient, test_db):
         json={"contenido": "Hola"},
     )
 
-    assert resp.status_code == 401
+    # HTTPBearer sin credenciales responde 403 (Forbidden)
+    assert resp.status_code == 403
 
 
 def test_crear_comentario_rest_foro_no_encontrado(client: TestClient, test_db):

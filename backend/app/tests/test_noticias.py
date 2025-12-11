@@ -32,7 +32,7 @@ def create_test_data(test_db):
     test_db.commit()
     
     # Create source
-    fuente = Fuente(Nombre_Fuente="TechNews", Url_Fuente="https://technews.com", Descripcion="Portal de tecnología")
+    fuente = Fuente(Nombre_Fuente="TechNews", Url_Fuente="https://technews.com", Tipo_Fuente="noticia")
     test_db.add(fuente)
     test_db.commit()
     

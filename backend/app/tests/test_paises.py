@@ -65,8 +65,8 @@ def test_create_pais_invalid_data(client: TestClient, test_db):
     pais_data = {}  # Empty data
     
     response = client.post("/api/v1/paises", json=pais_data)
-    # This might return 422 for validation error or 500 for server error
-    assert response.status_code in [422, 500]
+    # Debe fallar por validación (nombre es requerido)
+    assert response.status_code == 422
 
 
 def test_get_paises_after_creation(client: TestClient, test_db):
