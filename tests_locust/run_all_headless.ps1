@@ -38,13 +38,23 @@ function Activate-Venv {
 
 function Install-Requirements {
     Write-Host 'Instalando dependencias (requirements.txt)...' -ForegroundColor Cyan
-    pip install --upgrade pip > $null
+    try {
+        pip install --upgrade pip > $null
+    } catch {
+        Write-Warning 'No se pudo actualizar pip automáticamente. Continuando con la versión actual de pip.'
+    }
+
     pip install -r requirements.txt
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning 'Falló la instalación completa de requirements.txt. Instalando paquetes mínimos para ejecutar Locust y el backend...'
+        pip install fastapi uvicorn httpx locust
+    }
 }
 
 function Start-Backend {
     Write-Host 'Arrancando backend FastAPI (uvicorn)...' -ForegroundColor Cyan
-    $backendProcess = Start-Process -FilePath python -ArgumentList '-m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000' -PassThru
+    $backendDir = Join-Path (Get-Location) 'backend'
+    $backendProcess = Start-Process -FilePath python -ArgumentList '-m uvicorn app.main:app --host 127.0.0.1 --port 8000' -WorkingDirectory $backendDir -PassThru
     Write-Host "PID backend: $($backendProcess.Id)" -ForegroundColor Yellow
     Write-Host 'Esperando a que el backend responda...' -ForegroundColor Cyan
     $maxRetries = 30; $ready = $false

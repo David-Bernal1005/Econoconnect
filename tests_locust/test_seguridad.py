@@ -23,16 +23,18 @@ class SeguridadUser(HttpUser):
     @task(2)
     def acceso_admin_sin_auth(self):
         """Intento de acceso a zona restringida /admin sin credenciales."""
-        resp = self.client.get("/admin")
-        if resp.status_code not in (401, 403):
-            # Si devuelve 200 es una falla potencial
-            resp.failure(f"/admin accesible sin auth: status {resp.status_code}")
+        with self.client.get("/admin", catch_response=True) as resp:
+            if resp.status_code not in (401, 403):
+                # Si devuelve 200 es una falla potencial
+                resp.failure(f"/admin accesible sin auth: status {resp.status_code}")
 
     @task(1)
     def sql_injection_busqueda(self):
         """Intento de SQL Injection básico en /buscar."""
         payload = "%27 OR %271%27=%271"  # URL encoded ' OR '1'='1
-        resp = self.client.get(f"/buscar?query={payload}", name="SQLi /buscar")
-        if resp.status_code >= 500:
-            resp.failure("Posible vulnerabilidad (error 5xx ante SQLi)")
-        # Opcional: inspección de contenido que podría indicar fuga de datos
+        with self.client.get(
+            f"/buscar?query={payload}", name="SQLi /buscar", catch_response=True
+        ) as resp:
+            if resp.status_code >= 500:
+                resp.failure("Posible vulnerabilidad (error 5xx ante SQLi)")
+            # Opcional: inspección de contenido que podría indicar fuga de datos

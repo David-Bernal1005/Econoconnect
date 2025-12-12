@@ -27,37 +27,37 @@ class FuncionalidadUser(HttpUser):
     @task(2)
     def get_root(self):
         """Verifica que / responde correctamente."""
-        resp = self.client.get("/")
-        if resp.status_code != 200:
-            resp.failure(f"GET / status inesperado: {resp.status_code}")
+        with self.client.get("/", catch_response=True) as resp:
+            if resp.status_code != 200:
+                resp.failure(f"GET / status inesperado: {resp.status_code}")
 
     @task(2)
     def get_items(self):
         """Verifica listado de items."""
-        resp = self.client.get("/items")
-        if resp.status_code != 200:
-            resp.failure(f"GET /items status inesperado: {resp.status_code}")
-        else:
-            # Intento de parseo para garantizar JSON
-            try:
-                data = resp.json()
-                if not isinstance(data, (list, dict)):
-                    resp.failure("Respuesta /items no es lista ni dict")
-            except Exception as ex:
-                resp.failure(f"JSON inválido /items: {ex}")
+        with self.client.get("/items", catch_response=True) as resp:
+            if resp.status_code != 200:
+                resp.failure(f"GET /items status inesperado: {resp.status_code}")
+            else:
+                # Intento de parseo para garantizar JSON
+                try:
+                    data = resp.json()
+                    if not isinstance(data, (list, dict)):
+                        resp.failure("Respuesta /items no es lista ni dict")
+                except Exception as ex:
+                    resp.failure(f"JSON inválido /items: {ex}")
 
     @task(1)
     def post_item(self):
         """Crea un item de prueba."""
         payload = {"nombre": "Item de prueba", "precio": 100}
-        resp = self.client.post("/items", json=payload)
-        if resp.status_code not in (200, 201):
-            resp.failure(f"POST /items status inesperado: {resp.status_code}")
-        else:
-            try:
-                data = resp.json()
-                # Validaciones básicas opcionales
-                if "nombre" not in data:
-                    resp.failure("Respuesta POST /items sin campo 'nombre'")
-            except Exception as ex:
-                resp.failure(f"JSON inválido POST /items: {ex}")
+        with self.client.post("/items", json=payload, catch_response=True) as resp:
+            if resp.status_code not in (200, 201):
+                resp.failure(f"POST /items status inesperado: {resp.status_code}")
+            else:
+                try:
+                    data = resp.json()
+                    # Validaciones básicas opcionales
+                    if "nombre" not in data:
+                        resp.failure("Respuesta POST /items sin campo 'nombre'")
+                except Exception as ex:
+                    resp.failure(f"JSON inválido POST /items: {ex}")

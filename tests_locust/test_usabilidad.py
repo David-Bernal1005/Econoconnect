@@ -27,22 +27,22 @@ class UsabilidadUser(HttpUser):
     @task
     def flujo_basico(self):
         # Paso 1: Home
-        home = self.client.get("/", name="Flujo GET /")
-        if home.status_code != 200:
-            home.failure(f"Home status inesperado {home.status_code}")
+        with self.client.get("/", name="Flujo GET /", catch_response=True) as home:
+            if home.status_code != 200:
+                home.failure(f"Home status inesperado {home.status_code}")
 
         # Paso 2: Listado inicial
-        listado = self.client.get("/items", name="Flujo GET /items inicial")
-        if listado.status_code != 200:
-            listado.failure(f"Listado inicial status {listado.status_code}")
+        with self.client.get("/items", name="Flujo GET /items inicial", catch_response=True) as listado:
+            if listado.status_code != 200:
+                listado.failure(f"Listado inicial status {listado.status_code}")
 
         # Paso 3: Creación
         payload = {"nombre": "Flujo", "precio": 50}
-        creado = self.client.post("/items", json=payload, name="Flujo POST /items")
-        if creado.status_code not in (200, 201):
-            creado.failure(f"Creación item status {creado.status_code}")
+        with self.client.post("/items", json=payload, name="Flujo POST /items", catch_response=True) as creado:
+            if creado.status_code not in (200, 201):
+                creado.failure(f"Creación item status {creado.status_code}")
 
         # Paso 4: Listado posterior
-        listado2 = self.client.get("/items", name="Flujo GET /items final")
-        if listado2.status_code != 200:
-            listado2.failure(f"Listado final status {listado2.status_code}")
+        with self.client.get("/items", name="Flujo GET /items final", catch_response=True) as listado2:
+            if listado2.status_code != 200:
+                listado2.failure(f"Listado final status {listado2.status_code}")

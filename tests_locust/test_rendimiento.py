@@ -28,23 +28,23 @@ class RendimientoUser(HttpUser):
     @task(3)
     def carga_items(self):
         """Carga normal: una petición a /items."""
-        resp = self.client.get("/items", name="LOAD /items")
-        if resp.status_code != 200:
-            resp.failure(f"Status inesperado LOAD /items: {resp.status_code}")
+        with self.client.get("/items", name="LOAD /items", catch_response=True) as resp:
+            if resp.status_code != 200:
+                resp.failure(f"Status inesperado LOAD /items: {resp.status_code}")
 
     @task(2)
     def estres_items(self):
         """Estrés: varias peticiones secuenciales para elevar presión."""
         for i in range(5):
-            resp = self.client.get("/items", name="STRESS /items")
-            if resp.status_code != 200:
-                resp.failure(f"Status inesperado STRESS /items: {resp.status_code}")
+            with self.client.get("/items", name="STRESS /items", catch_response=True) as resp:
+                if resp.status_code != 200:
+                    resp.failure(f"Status inesperado STRESS /items: {resp.status_code}")
 
     @task(1)
     def spike_items(self):
         """Spike: pico súbito (ej. 10-15 peticiones rápidas)."""
         burst = random.randint(10, 15)
         for i in range(burst):
-            resp = self.client.get("/items", name="SPIKE /items")
-            if resp.status_code != 200:
-                resp.failure(f"Status inesperado SPIKE /items: {resp.status_code}")
+            with self.client.get("/items", name="SPIKE /items", catch_response=True) as resp:
+                if resp.status_code != 200:
+                    resp.failure(f"Status inesperado SPIKE /items: {resp.status_code}")

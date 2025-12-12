@@ -27,18 +27,33 @@ class CompatibilidadUser(HttpUser):
 
     @task(3)
     def chrome_root(self):
-        resp = self.client.get("/", headers={"User-Agent": CHROME_UA}, name="Chrome /")
-        if resp.status_code != 200:
-            resp.failure(f"Chrome / status: {resp.status_code}")
+        with self.client.get(
+            "/",
+            headers={"User-Agent": CHROME_UA},
+            name="Chrome /",
+            catch_response=True,
+        ) as resp:
+            if resp.status_code != 200:
+                resp.failure(f"Chrome / status: {resp.status_code}")
 
     @task(2)
     def firefox_root(self):
-        resp = self.client.get("/", headers={"User-Agent": FIREFOX_UA}, name="Firefox /")
-        if resp.status_code != 200:
-            resp.failure(f"Firefox / status: {resp.status_code}")
+        with self.client.get(
+            "/",
+            headers={"User-Agent": FIREFOX_UA},
+            name="Firefox /",
+            catch_response=True,
+        ) as resp:
+            if resp.status_code != 200:
+                resp.failure(f"Firefox / status: {resp.status_code}")
 
     @task(1)
     def android_root(self):
-        resp = self.client.get("/", headers={"User-Agent": ANDROID_UA}, name="Android /")
-        if resp.status_code != 200:
-            resp.failure(f"Android / status: {resp.status_code}")
+        with self.client.get(
+            "/",
+            headers={"User-Agent": ANDROID_UA},
+            name="Android /",
+            catch_response=True,
+        ) as resp:
+            if resp.status_code != 200:
+                resp.failure(f"Android / status: {resp.status_code}")
