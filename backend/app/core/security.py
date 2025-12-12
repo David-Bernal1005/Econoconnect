@@ -14,11 +14,29 @@ ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 
+
+def _normalize_password(password: str) -> str:
+    """Ajusta la contraseña al límite de 72 bytes de bcrypt.
+
+    Se trunca en representación UTF-8 para evitar el ValueError
+    "password cannot be longer than 72 bytes".
+    """
+    if password is None:
+        return ""
+    password_bytes = password.encode("utf-8")
+    if len(password_bytes) <= 72:
+        return password
+    # Truncar a 72 bytes y decodificar ignorando restos cortados
+    truncated = password_bytes[:72]
+    return truncated.decode("utf-8", errors="ignore")
+
+
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    return pwd_context.hash(_normalize_password(password))
+
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return pwd_context.verify(_normalize_password(plain), hashed)
 
 def create_access_token(data: dict, expires_minutes: int | None = None) -> str:
     to_encode = data.copy()
